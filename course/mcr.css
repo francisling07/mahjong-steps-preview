@@ -1,0 +1,31 @@
+.mcr-page{max-width:1080px}
+.mcr-page .course-stats,.mcr-page .course-entry{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}
+.mcr-page .course-stat{padding:8px 13px;border-radius:999px;background:#e9f1de;color:#31573e;font-size:12px;font-weight:750}
+.mcr-page .course-entry .btn{min-height:44px}
+.mcr-page .course-chapter{margin:26px 0 0;padding:20px;border:1px solid #dde4d3;border-radius:15px;background:#fffdf4}
+.mcr-page .course-chapter h2{font-size:19px;color:#274b3c;margin:0 0 8px}
+.mcr-page .course-chapter>p{font-size:13px;line-height:1.65;color:#66786b;margin:0 0 16px}
+.mcr-page .course-lessons,.mcr-page .mcr-fan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px}
+.mcr-page .course-lesson,.mcr-page .mcr-fan-card{display:flex;flex-direction:column;justify-content:space-between;gap:8px;min-height:66px;text-align:left;background:#f8f9ef;border:1px solid #d9e2d2;border-radius:10px;padding:13px;color:#294736;font:inherit;cursor:pointer}
+.mcr-page .course-lesson:hover,.mcr-page .mcr-fan-card:hover{border-color:#72a47c;background:#eff5e9}
+.mcr-page .course-lesson small,.mcr-page .mcr-fan-card small{color:#718978;font-size:11px}
+.mcr-page .mcr-fan-card b{font-size:14px}
+.mcr-page .mcr-reference-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:10px}
+.mcr-page .mcr-reference-list details{background:#f9f9f0;border:1px solid #dce4d2;border-radius:10px;padding:12px 14px}
+.mcr-page .mcr-reference-list summary{display:flex;justify-content:space-between;gap:12px;cursor:pointer;color:#294736}
+.mcr-page .mcr-reference-list summary span{font-size:12px;color:#7a8b7b;white-space:nowrap}
+.mcr-page .mcr-reference-list p{font-size:13px;line-height:1.7;color:#516d5e}
+.mcr-page .mcr-reference-list .btn{font-size:12px;padding:8px 12px}
+.mcr-page .mcr-question{max-width:860px;margin-left:auto;margin-right:auto}
+.mcr-page .mcr-question h2{font-size:20px;line-height:1.5}
+.mcr-page .mcr-question .choice{background:#f5f7ea;border:1px solid #d4dfcd;padding:11px 15px;text-align:left;color:#28473b;min-height:46px;font-size:14px;font-weight:650}
+.mcr-page .mcr-question .choice:hover,.mcr-page .mcr-question .choice.chosen{background:#e5f1df;border-color:#6b9d76;box-shadow:0 0 0 2px #a8c5a3}
+.mcr-page .mcr-tiles{display:flex;flex-wrap:wrap;gap:5px;margin:16px 0;padding:13px;background:#eaf0df;border-radius:12px}
+.mcr-page .mcr-tiles .tile{width:49px;height:69px}
+.mcr-page .mcr-pick{padding:0;border:0;border-radius:6px;background:transparent;cursor:pointer}
+.mcr-page .mcr-pick.selected{outline:3px solid #c9923d;outline-offset:2px;transform:translateY(-4px)}
+.mcr-page .course-note{background:#f7f0da;color:#6a6247;padding:12px;border-radius:9px;font-size:13px;line-height:1.65}
+.mcr-page .course-source{font-size:12px;margin:20px 0}.mcr-page .course-source a{color:#2e6851}
+.mcr-page .feedback p{margin:6px 0 0}
+.mcr-page .mcr-done{text-align:center}
+@media(max-width:600px){.mcr-page{padding:18px}.mcr-page .course-chapter{padding:14px}.mcr-page .mcr-tiles .tile{width:40px;height:56px}.mcr-page .course-entry{flex-direction:column}.mcr-page .course-entry .btn{width:100%}}

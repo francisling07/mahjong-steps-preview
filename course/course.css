@@ -1,0 +1,98 @@
+/* T518 course UI styles. Scoped to .course-root so the global theme is untouched. */
+.course-root .course-warn{font-size:12px;line-height:1.65;color:#865b35;background:#fff3e7;border-radius:10px;padding:10px 14px;margin:0 0 18px}
+.course-root .course-stats{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 22px}
+.course-root .course-stat{background:#fffdf3;border:1px solid #dfe4cd;border-radius:999px;padding:8px 16px;font-size:12px;font-weight:800;color:#55694f}
+.course-root .course-entry{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 30px}
+.course-root .course-chapter{margin:28px 0 6px}
+.course-root .course-chapter h2{font-size:18px;margin:0 0 4px;color:#27431f}
+.course-root .course-chapter>p{margin:0 0 14px;color:#64675b;font-size:13px}
+.course-root .course-lessons{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px}
+.course-root .course-lesson{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:56px;text-align:left;padding:12px 16px;border:1px solid #d5dccb;border-radius:11px;background:#fffdf3;color:#283123;font-size:14px;font-weight:700;cursor:pointer}
+.course-root .course-lesson:hover{background:#f3f5e4;border-color:#a9bb93}
+.course-root .course-lesson:focus-visible{outline:3px solid #bb8b3a;outline-offset:3px}
+.course-root .course-lesson-state{font-size:11px;font-weight:800;color:#9aa58f;white-space:nowrap}
+.course-root .course-lesson-state.done{color:#2e7d46}
+.course-root .course-tiles{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px}
+.course-root .course-tiles .tile,.course-root .course-option .tile{width:64px;height:88px;flex:none}
+.course-root .course-inline-tiles{margin:0}
+.course-root .course-options{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0}
+.course-root .course-option{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:44px;padding:9px;border:1px solid #d5dccb;border-radius:12px;background:#fff;color:#283123;font:inherit;cursor:pointer}
+.course-root .course-option:hover:not(:disabled){border-color:#9db98c}
+.course-root .course-option.selected{border-color:#2e7d46;box-shadow:0 0 0 3px #84b297;transform:translateY(-2px)}
+.course-root .course-option:focus-visible{outline:3px solid #bb8b3a;outline-offset:3px}
+.course-root .course-option:disabled{cursor:default}
+.course-root .course-opt-label{max-width:170px;font-size:13px;font-weight:700;text-align:center;line-height:1.45}
+.course-root .course-count{margin:2px 0 14px;font-size:13px;font-weight:800;color:#41563c}
+.course-root .course-hint{margin:0 0 10px;font-size:11px;color:#829489}
+.course-root .course-hand{display:flex;gap:5px;overflow-x:auto;padding:10px 6px 16px;max-width:100%;-webkit-overflow-scrolling:touch;background:#f2f2e0;border-radius:10px}
+.course-root .course-hand:focus-visible{outline:3px solid #bb8b3a;outline-offset:2px}
+.course-root .course-hand .tile{width:58px;height:80px;flex:none}
+.course-root .course-note{margin:16px 0 0;padding:11px 14px;border-radius:10px;background:#faf3dd;color:#7a6330;font-size:12px;line-height:1.65}
+.course-root .course-feedback{margin:18px 0 6px;padding:15px 18px;border-radius:12px;background:#edf5e9;color:#355e45;border-left:5px solid #4f8f5f;line-height:1.65}
+.course-root .course-feedback.bad{background:#fff3e7;color:#865b35;border-left-color:#d09248}
+.course-root .course-feedback p{margin:6px 0 0}
+.course-root .course-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+.course-root .course-actions .btn{min-height:44px}
+.course-root .course-empty{padding:34px 8px;text-align:center;color:#64675b;line-height:1.8}
+.course-root .course-hidelabels .tile-index{display:none}
+@media(max-width:430px){.course-root .course-lessons{grid-template-columns:1fr}.course-root .course-tiles .tile,.course-root .course-option .tile{width:58px;height:80px}.course-root .course-hand .tile{width:52px;height:72px}}
+/* Complete Hong Kong course: teaching table, waits and reference. */
+.course-root{min-width:0}.course-root .panel{min-width:0}
+.course-root .course-profile{font-size:12px;line-height:1.7;color:#52664c;margin:-8px 0 24px}
+.course-root .course-context{padding:14px;border-radius:10px;background:#f2f3e8;line-height:1.8;color:#42563d}
+.course-root .course-claim-preview{display:flex;align-items:center;gap:16px;padding:12px;background:#eaf0e2;border-radius:10px}.course-root .course-claim-preview .tile{width:58px;height:80px}
+.course-root .course-round-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:18px 0 12px}.course-root .course-round-heading>span{font-size:12px;white-space:nowrap;color:#5f7158}
+.course-root .course-table{padding:22px;background:radial-gradient(ellipse at 50% 30%,#3d8357,#28583b);border:7px solid #645343;border-radius:22px;box-shadow:inset 0 0 40px #143c2b66,0 5px 0 #d8d3bc;color:#f6f1d9;min-width:0;overflow:hidden}
+.course-root .course-opponents{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:start}
+.course-root .course-seat{min-width:0;text-align:center;padding:10px 6px;border-radius:10px;background:#0c362829;font-size:12px}
+.course-root .course-seat strong{font-size:12px;color:#fff3d4;display:block}.course-root .course-seat:nth-child(2){margin-bottom:15px;transform:translateY(-5px)}
+.course-root .course-tile-backs{display:flex;justify-content:center;gap:2px;margin:10px 0}.course-root .course-tile-backs i{width:11px;height:22px;background:linear-gradient(90deg,#d5e9bd,#8fb47e);border-radius:2px;border-bottom:3px solid #e9eddb}
+.course-root .course-river{display:flex;justify-content:center;align-items:center;gap:4px;flex-wrap:wrap;min-height:40px;margin-top:5px}.course-root .course-river .tile{width:27px;height:38px;flex:none}.course-root .course-river small{opacity:.65}
+.course-root .course-table-center{min-height:105px;display:flex;justify-content:center;align-items:center;gap:30px;padding:14px 0}.course-root .course-table-center>div:first-child{display:flex;flex-direction:column;gap:8px;font-size:12px}.course-root .course-table-center strong{font-size:15px;color:#fff3d4}
+.course-root .course-pending{display:flex;gap:12px;align-items:center;font-size:12px}.course-root .course-pending .tile{width:50px;height:70px;outline:2px solid #efca75;outline-offset:3px}
+.course-root .course-player{border-top:1px solid #cdddc44d;padding-top:14px;min-width:0}.course-root .course-player-label{display:flex;justify-content:space-between;gap:10px;font-size:12px;margin-bottom:12px}.course-root .course-player-label strong{font-size:14px;color:#fff4d6}
+.course-root .course-round-hand{display:flex;gap:4px;overflow-x:auto;padding:9px 5px 12px;max-width:100%;scrollbar-color:#b5c69c transparent;scrollbar-width:thin}.course-root .course-round-hand:focus-visible{outline:2px solid #e9c56d;outline-offset:2px}.course-root .course-round-hand .tile{width:48px;height:68px;flex:none}
+.course-root .course-round-tile{background:transparent;padding:0;border:0;border-radius:6px;flex:none;cursor:pointer}.course-root .course-round-tile.selected{transform:translateY(-6px);outline:3px solid #efc15c;outline-offset:1px}.course-root .course-round-tile:focus-visible{outline:3px solid #ffe59f;outline-offset:2px}
+.course-root .course-rack-note{font-size:11px;color:#d0ddbf;margin:0;line-height:1.7}.course-root .course-exposed{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:11px;margin:10px 0}.course-root .course-meld{display:flex;gap:2px;padding:5px;border:1px solid #ccd8ad77;border-radius:7px}.course-root .course-meld .tile{width:35px;height:48px;flex:none}
+.course-root .course-round-prompt{margin-top:20px;line-height:1.75}.course-root .course-round-prompt h3{margin:8px 0;font-size:16px;color:#29452c}.course-root .course-round-hint{padding:12px 16px;background:#f0f2e5;border-left:3px solid #9ea978;border-radius:6px;color:#5c6849;font-size:13px}.course-root .course-route-message{color:#865b35;font-size:13px}.course-root .course-round-tools .btn{font-size:12px;padding:10px 14px;background:transparent;box-shadow:none}.course-root .course-round-actions .btn{background:#3e7046;color:white}.course-root .course-round-actions .btn:disabled{background:#b4b9a6;color:#f6f3e8;cursor:default}
+.course-root .course-round-result{padding:18px;margin-top:20px;background:#eef2e2;border-radius:12px}.course-root .course-round-result h3{color:#355b37;margin:0 0 8px}.course-root .course-round-result p{font-size:12px;color:#687452}.course-root .course-round-result ul{list-style:none;margin:0;padding:0}.course-root .course-round-result li{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid #d5debf;padding:8px 0;font-size:13px}
+.course-root .course-payment{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}.course-root .course-payment>span{display:flex;flex-direction:column;font-size:11px;color:#5d704e;gap:5px;background:#fcfbf1;border:1px solid #dce4cb;border-radius:10px;padding:14px}.course-root .course-payment strong{font-size:25px;color:#31572f}.course-root .course-payment small{font-size:11px;font-weight:400}
+.course-root .course-source{font-size:12px;line-height:1.8;margin-bottom:25px}.course-root .course-source a{color:#32613c;text-underline-offset:3px}.course-root .course-calculator>p{font-size:13px;line-height:1.8;color:#626e55}.course-root .course-fans{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.course-root .course-fans .btn{padding:9px 12px;min-width:54px}.course-root .course-calculator .selected{background:#416d43;color:#fff4de;box-shadow:none}.course-root .course-reference-section{margin-top:32px}.course-root .course-reference-section h2{font-size:20px;color:#2e4c29}.course-root .course-reference-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.course-root .course-reference-card{padding:20px;background:#fffdf3;border:1px solid #d9dfca;border-radius:12px}.course-root .course-reference-card>div{display:flex;justify-content:space-between;align-items:start;gap:12px}.course-root .course-reference-card h3{font-size:15px;margin:0;color:#2e472a}.course-root .course-faan{white-space:nowrap;font-size:12px;background:#e9edda;color:#52653b;padding:4px 8px;border-radius:5px}.course-root .course-reference-card p{line-height:1.8;font-size:13px;color:#657057;margin:12px 0 0}
+@media(max-width:650px){.course-root .course-table{padding:12px;border-width:5px;border-radius:16px}.course-root .course-opponents{gap:5px}.course-root .course-seat{padding:8px 2px}.course-root .course-seat strong{font-size:10px}.course-root .course-tile-backs{gap:1px}.course-root .course-tile-backs i{width:7px;height:18px}.course-root .course-table-center{gap:16px}.course-root .course-pending{flex-direction:column;gap:6px}.course-root .course-table-center strong{font-size:12px}.course-root .course-round-heading{align-items:start;font-size:14px}.course-root .course-payment{gap:6px}.course-root .course-payment>span{padding:10px 8px}.course-root .course-payment strong{font-size:22px}.course-root .course-reference-grid{grid-template-columns:1fr}.course-root .course-reference-card{padding:16px}.course-root .course-fans .btn{min-width:50px}.course-root .course-round .course-note{margin-top:8px}.course-root .course-round-hand .tile{width:46px;height:64px}}
+
+.course-root .course-round-explanation{padding:12px 16px;margin:12px 0 0;background:#e3f0db;color:#355e40;border-left:3px solid #76a56b;border-radius:7px;font-size:13px;line-height:1.75}
+
+/* Reusable foundation and Sichuan learning track. */
+.bridge-root .bridge-hand{margin:14px 0 18px;align-items:center}
+.bridge-root .bridge-tile-choice{padding:0;margin:0 2px 0 0;border:0;border-radius:7px;background:transparent;cursor:pointer;flex:none}
+.bridge-root .bridge-tile-choice .tile{width:54px;height:76px}
+.bridge-root .bridge-tile-choice.selected{outline:3px solid #e2ae53;outline-offset:2px;transform:translateY(-5px)}
+.bridge-root .bridge-tile-choice:focus-visible{outline:3px solid #e2ae53;outline-offset:2px}
+.bridge-root .course-lesson-state{max-width:110px;white-space:normal;text-align:right;line-height:1.35}
+.bridge-root .bridge-comparison-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.bridge-root .bridge-comparison-grid article{padding:15px;border:1px solid #d9dfca;border-radius:11px;background:#fffdf3}
+.bridge-root .bridge-comparison-grid strong{color:#2e4c29}
+.bridge-root .bridge-comparison-grid p{font-size:12px;line-height:1.6;color:#5a6654;margin:8px 0 0}
+@media(max-width:650px){.bridge-root .bridge-comparison-grid{grid-template-columns:1fr}.bridge-root .bridge-tile-choice .tile{width:49px;height:69px}}
+/* T523 Sichuan key-moment rounds and point buttons. */
+.bridge-root .bridge-round-badge{display:inline-block;margin-top:16px;padding:5px 13px;border-radius:999px;background:#f3e6c8;color:#7a5a22;font-size:11px;font-weight:800;letter-spacing:.05em}
+.bridge-root .bridge-round-label{margin:16px 0 0;font-size:12px;font-weight:800;color:#5f7158;letter-spacing:.04em}
+.bridge-root .bridge-round-meta{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px;min-width:0}
+.bridge-root .bridge-round-meta>span{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;font-weight:700;color:#41563c;background:#f2f3e8;border-radius:8px;padding:7px 12px;min-width:0}
+.bridge-root .bridge-round-meta .tile{width:30px;height:42px}
+.bridge-root .bridge-value{min-width:28px;font-size:15px}
+.bridge-root .course-round-result li small{font-size:11px;font-weight:400;color:#687452}
+@media(max-width:430px){.bridge-root .bridge-round-meta .tile{width:26px;height:36px}}
+
+/* American Mah Jongg lessons use the same warm course cards and vector tiles. */
+.american-root .eyebrow{margin-top:24px}
+.american-root .american-hand{align-items:center;margin:16px 0 18px}
+.american-root .american-tile-choice{padding:1px;margin:0 2px 0 0;border:0;border-radius:7px;background:transparent;cursor:pointer;flex:none}
+.american-root .american-tile-choice .tile{width:54px;height:76px}
+.american-root .american-tile-choice.selected{outline:3px solid #d8a64c;outline-offset:2px;transform:translateY(-4px)}
+.american-root .american-tile-choice:focus-visible{outline:3px solid #a97023;outline-offset:2px}
+.american-root .american-tile-choice:disabled{cursor:default}
+.american-root .american-order-state{padding:10px 13px;margin:10px 0;background:#f2f3e8;border-radius:8px;color:#42563d;line-height:1.7;font-size:13px}
+.american-root .course-option{max-width:250px;text-align:center}
+.american-root .course-source a{color:#32613c;text-underline-offset:3px}
+@media(max-width:430px){.american-root .american-tile-choice .tile{width:49px;height:69px}.american-root .course-option{max-width:100%}}
