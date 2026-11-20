@@ -1,0 +1,26 @@
+const assert=require('node:assert/strict'),R=require('./hk-rules.js');
+const t=s=>s.split(' '),clone=x=>JSON.parse(JSON.stringify(x));
+const basic=t('m1 m2 m3 p4 p5 p6 s6 s7 s8 z5 z5 z5 z2 z2');assert(R.isWinning(basic));
+assert(!R.isWinning(basic.slice(1)));assert(!R.isWinning(t('m1 m1 m2 m2 p3 p3 p4 p4 s5 s5 z1 z1 z2 z2')));
+const orphans=t('m1 m9 p1 p9 s1 s9 z1 z2 z3 z4 z5 z6 z7 z1');assert(R.isWinning(orphans));
+assert(!R.isWinning(orphans.map(v=>v==='z7'?'m2':v)));
+const m=[{type:'kong',tiles:t('z5 z5 z5 z5')}],h=t('p1 p2 p3 p4 p5 p6 z2 z2 z2 p9 p9');assert(R.isWinning(h,m));assert(!R.isWinning(h,[{type:'kong',tiles:t('z5 z5 z5 z1')}]));
+assert(!R.isWinning(t('p1 p2 p3 p4 p5 p6 z5 z5 z5 p9 p9'),m));
+const pair=t('m8 m8'),four=[{type:'chow',tiles:t('m1 m2 m3')},{type:'pung',tiles:t('z5 z5 z5')},{type:'chow',tiles:t('p1 p2 p3')},{type:'kong',tiles:t('s1 s1 s1 s1')}];assert(R.isWinning(pair,four));
+assert.deepEqual(R.waits(t('m1 m2 m3 s4 s5 s6 z5 z5 z5 p3 p4 z2 z2')),['p2','p5']);
+assert.deepEqual(R.waits(t('m1 m2 m3 p4 p5 p6 s6 s7 s8 z5 z5 z5 z2')),['z2']);
+assert.deepEqual(R.waits(t('m1 m9 p1 p9 s1 s9 z1 z2 z3 z4 z5 z6 z7')),t('m1 m9 p1 p9 s1 s9 z1 z2 z3 z4 z5 z6 z7'));
+assert.deepEqual(R.waits(h.slice(0,-1),m),['p9']);
+assert(!R.waits(t('m1 m1 m1 m1 m2 m3 p1 p2 p3 s1 s2 s3 z1')).includes('m1'));
+assert.deepEqual(R.claimOptions(t('p2 p4'),'p3','previous'),[{type:'chow',used:['p2','p4']}]);
+assert.deepEqual(R.claimOptions(t('p2 p4'),'p3','opposite'),[]);
+assert.deepEqual(R.claimOptions(t('z5 z5 z5'),'z5','next'),[{type:'pung',used:['z5','z5']},{type:'kong',used:['z5','z5','z5']}]);
+assert.deepEqual(R.claimOptions(t('z1 z3'),'z2','previous'),[]);assert.deepEqual(R.claimOptions(t('z5 z5 z5 z5'),'z5','next'),[]);
+const multiple=R.claimOptions(t('m1 m2 m2 m4 m5'),'m3','previous');assert.equal(multiple.filter(c=>c.type==='chow').length,3);
+for(let f=3;f<=10;f++){const points=[32,64,96,128,192,256,384,512][f-3];assert.deepEqual(R.settlement(f,'discard'),{fan:f,mode:'discard',payerCount:1,paymentEach:points,total:points});assert.equal(R.settlement(f,'selfDraw').total,points/2*3)}assert.equal(R.settlement(12,'discard').fan,10);
+for(const x of [null,undefined,0,2,3.5,NaN,Infinity,'3',{},Number.MAX_VALUE])assert.equal(R.settlement(x,'discard'),null);
+assert.equal(R.settlement(3,'bad'),null);
+for(const bad of [null,undefined,{},42,['bad'],Array(14).fill('m1')]){assert.equal(R.isWinning(bad),false);assert.deepEqual(R.waits(bad),[]);assert.deepEqual(R.claimOptions(bad,'p3','previous'),[])}
+for(const bad of [null,{},[null],[{type:'bad',tiles:[]}],Array(5).fill(four[0])])assert.equal(R.isWinning(basic,bad),false);
+const bh=clone(h),bm=clone(m);R.isWinning(h,m);R.waits(h.slice(0,-1),m);assert.deepEqual(h,bh);assert.deepEqual(m,bm);
+console.log('PASS HK teaching rules: standard and exposed/kong shapes, Thirteen Orphans, all waits, claim sources, points table and invalid inputs');

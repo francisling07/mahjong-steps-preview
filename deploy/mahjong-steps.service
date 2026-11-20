@@ -1,0 +1,15 @@
+[Unit]
+Description=Mahjong Steps LAN HTTPS preview
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 %h/mahjong-steps/serve_https.py
+WorkingDirectory=%h/mahjong-steps
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

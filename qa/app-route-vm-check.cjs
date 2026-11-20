@@ -1,0 +1,35 @@
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
+const root=path.join(__dirname,'..'),listeners={},store=new Map();
+function elem(id){return {id,value:'',textContent:'',innerHTML:'',addEventListener(name,fn){listeners[id+':'+name]=fn},querySelectorAll(){return []},querySelector(){return null},scrollIntoView(){}}}
+const app=elem('app'),lang=elem('lang'),home=elem('homeBtn'),learn=elem('learnBtn'),foot=elem('foot');
+const nodes={app,lang,homeBtn:home,learnBtn:learn,foot};
+const document={documentElement:{lang:''},querySelector(sel){return nodes[sel.slice(1)]||null}};
+const storage={getItem(k){return store.has(k)?store.get(k):null},setItem(k,v){store.set(k,String(v))},removeItem(k){store.delete(k)}};
+const ctx=vm.createContext({document,localStorage:storage,window:null,console,confirm(){return true}});ctx.window=ctx;ctx.scrollTo=()=>{};
+for(const f of ['meld.js','tile-art.js','course/data.js','course/hk-rules.js','course/round-data.js','course/round-engine.js','course/reference-data.js','course/rulebook-data.js','course/engine.js','course/extras-ui.js','course/ui.js','course/sichuan-rules.js','course/bridge-data.js','course/bridge-ui.js','course/american-part1.js','course/american-part2.js','course/american-final-data.js','course/american-engine.js','course/american-ui.js','playground/data.js','playground/engine.js','playground/ui.js','playground/deck.js','playground/judges.js','playground/full-engine.js','playground/advisor.js','playground/full-ui.js','app.js'])vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),ctx,{filename:f});
+function click(dataset){const el={dataset,hasAttribute(k){return k.replace(/^data-/,'').replace(/-([a-z])/g,(_,c)=>c.toUpperCase()) in dataset},getAttribute(){return null},focus(){}};listeners['app:click']({target:{closest(){return el}}});return app.innerHTML;}
+let html=click({mode:'begin'});assert(html.includes('data-course-open="hk-8-3"'));
+html=click({courseRules:''});assert(html.includes('data-rule-id="score-confirm"'));html=click({courseMap:''});html=click({courseReference:''});assert(html.includes('data-reference-id="29"'));
+html=click({courseFan:'6'});html=click({courseMethod:'selfDraw'});assert(html.includes('192'));
+html=click({courseMap:''});html=click({courseOpen:'hk-8-1'});assert(html.includes('跟着提示打完一局'));
+html=click({courseBegin:''});const lesson=require('../course/data.js').chapters[7].lessons[0];html=click({courseOption:lesson.questions[0].answerId});html=click({courseSubmit:''});assert(html.includes('data-course-next'));
+html=click({courseNext:''});html=click({courseOption:lesson.questions[1].answerId});html=click({courseSubmit:''});assert(html.includes('data-course-next'));
+html=click({courseNext:''});assert(html.includes('data-round-scenario="pung"'));
+html=click({courseRoundAction:'deal'});assert(html.includes('data-round-cursor="1"'));
+lang.value='en';listeners['lang:change']();assert(app.innerHTML.includes('data-round-cursor="1"'));
+html=click({rule:'2'});assert(html.includes('data-bridge-enter="sichuan"'));html=click({bridgeEnter:'sichuan'});assert(html.includes('data-bridge-open="sc-1-1"'));html=click({bridgeStartSichuan:''});assert(html.includes('data-bridge-option'));
+html=click({bridgeOption:'b'});html=click({bridgeSubmit:''});assert(html.includes('Correct'));html=click({bridgeNext:''});assert(html.includes('Question 2 of 3'));
+html=click({bridgeMap:''});assert(html.includes('data-bridge-open="base-1"'));html=click({bridgeBack:''});assert(html.includes('data-bridge-enter="foundation"'));
+html=click({bridgeEnter:'foundation'});assert(html.includes('data-bridge-to-hk'));html=click({bridgeToHk:''});assert(html.includes('data-course-open="hk-1-1"'));
+assert(html.includes('data-course-shared'));html=click({courseShared:''});assert(html.includes('data-bridge-open="base-1"'));
+html=click({bridgeBack:''});html=click({rule:'2'});listeners['app:change']({target:{id:'exchange',checked:true}});assert.equal(store.get('mj-sichuan-exchange'),'1');html=click({bridgeEnter:'sichuan'});assert(html.includes('data-bridge-open="sc-x-1"'));
+html=click({playEnter:''});assert(html.includes('data-full-start'));html=click({fullShort:''});assert(html.includes('data-play-open="hk-discard"'));
+html=click({playMode:'sc'});assert(html.includes('data-play-open="sc-missing"'));
+html=click({playOpen:'sc-missing'});assert(html.includes('data-play-action="drop-one"'));
+html=click({playAction:'drop-dot'});assert(html.includes('Bamboo, your missing suit'));
+html=click({playAction:'drop-one'});assert(html.includes('1 Bam discarded'));
+html=click({playRestart:''});assert(html.includes('data-play-action="drop-one"'));
+lang.value='en';listeners['lang:change']();assert(app.innerHTML.includes('Discard 1 Bam'));
+html=click({playMap:''});assert(html.includes('Table Playground'));
+html=click({playBack:''});assert(html.includes('data-play-enter'));
+console.log('PASS app routing: Hong Kong, Sichuan, American, shared foundation and playground navigation, actions, restart and language switch');

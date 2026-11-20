@@ -1,0 +1,14 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+node_modules/
+coverage/
+dist/
+deploy/tls/
+deploy/current/
+qa/*.png
+qa/*results.json

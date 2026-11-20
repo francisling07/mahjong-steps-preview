@@ -1,0 +1,9 @@
+{
+  "name": "mahjong-steps",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Interactive Mahjong lessons and practice table",
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}
