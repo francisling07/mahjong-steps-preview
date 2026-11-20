@@ -364,12 +364,12 @@
     }
     if(s.phase!=='turn'||s.turn!==0)return bad('not-your-turn');
     if(action.type==='manual-win'){
-      if(s.mode==='mcr'&&s.turnSource!=='draw')return bad('not-drawn');
+      if(s.turnSource!=='draw')return bad('not-drawn');
       const judged=manualJudged(s,0,'selfDraw',null,action.fanNos);if(!judged)return bad('invalid-manual-score');
       applyWin(s,0,'selfDraw',null,null,judged);return {state:s,accepted:true,reason:'ok'};
     }
     if(action.type==='win'){
-      if(s.mode==='mcr'&&s.turnSource!=='draw')return bad('not-drawn');
+      if(s.turnSource!=='draw')return bad('not-drawn');
       const judged=Judges.judge(s.mode,s,0,'selfDraw');if(!judged?.legal)return bad('not-winning');
       applyWin(s,0,'selfDraw',null,null,judged);
       if(s.mode==='sc'&&s.phase!=='ended'){nextTurn(s,0);runAuto(s);}
