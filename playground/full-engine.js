@@ -22,6 +22,7 @@
     if(!s.wall.length){endDraw(s);return false;}
     const tile=replacement?s.wall.pop():s.wall.shift();s.hands[seat].push(tile);
     log(s,replacement?'replacement':'draw',seat,{tile});
+    s.turnSource='draw';
     if(s.mode==='mcr'){
       if(!replaceFlowers(s,seat))return false;
       s.lastDraw={seat,tile:tile[0]==='f'?s.history.filter(x=>x.seat===seat&&x.type==='replacement').at(-1)?.tile:tile,
@@ -50,7 +51,7 @@
       melds:[[],[],[],[]],discards:[[],[],[],[]],flowers:[[],[],[],[]],active:[true,true,true,true],
       missingSuit:[null,null,null,null],points:[0,0,0,0],phase:mode==='sc'?(opt.scExchange?'exchange':'missing'):mode==='am'?'charleston':'turn',
       turn:0,needDraw:false,lastDiscard:null,pending:null,charlestonStep:0,winners:[],result:null,
-      roundWind:'z1',lastDraw:null,lastDiscardMethod:null,turnSource:mode==='mcr'?'draw':null,history:[]};
+      roundWind:'z1',lastDraw:null,lastDiscardMethod:null,turnSource:'draw',history:[]};
     log(s,'deal',null,{mode,seed});log(s,'draw',0,{tile:openingTile,opening:true});
     if(mode==='mcr'){
       for(let seat=0;seat<4;seat++)if(!replaceFlowers(s,seat))return s;
@@ -166,7 +167,7 @@
     if(s.phase==='ended')return;
     if(!s.wall.length){endDraw(s);return;}
     const next=nextActive(s,after);if(next<0){endDraw(s);return;}
-    s.turn=next;s.needDraw=true;s.phase='turn';s.pending=null;if(s.mode==='mcr')s.turnSource='await';
+    s.turn=next;s.needDraw=true;s.phase='turn';s.pending=null;s.turnSource='await';
   }
   function applyClaim(s,seat,choice){
     const p=s.pending;if(!p)return false;
@@ -177,7 +178,7 @@
     const pile=s.discards[p.discarder];if(pile[pile.length-1]!==p.tile)return false;pile.pop();
     const meld={type:matched.kind,tiles:matched.used.concat([p.tile]),baseTile:p.tile,from:p.discarder,concealed:false};
     s.melds[seat].push(meld);sortHand(hand);log(s,'claim',seat,{kind:matched.kind,tile:p.tile,from:p.discarder});
-    s.turn=seat;s.needDraw=false;s.phase='turn';s.pending=null;s.lastDiscard=null;if(s.mode==='mcr')s.turnSource='claim';
+    s.turn=seat;s.needDraw=false;s.phase='turn';s.pending=null;s.lastDiscard=null;s.turnSource='claim';
     if(matched.kind==='kong'){
       if(s.mode==='sc')applyKongPayment(s,seat,'discard',p.discarder);
       if(s.mode!=='am')draw(s,seat,true);
@@ -214,7 +215,9 @@
     for(let gap=1;gap<4;gap++){
       const seat=(discarder+gap)%4;if(seat===0||!s.active[seat])continue;
       const options=claimChoices(s,seat,discarder,tile);
-      const chosen=options.find(x=>x.kind==='pung')||options.find(x=>x.kind==='chow');
+      const chow=options.find(x=>x.kind==='chow');
+      const hkFlush=s.mode==='hk'&&new Set(s.hands[seat].concat(s.melds[seat].flatMap(m=>m.tiles),tile).filter(t=>'mps'.includes(t[0])).map(t=>t[0])).size===1;
+      const chosen=options.find(x=>x.kind==='pung')||(s.mode==='hk'&&!hkFlush?null:chow);
       if(chosen){s.pending={discarder,tile};applyClaim(s,seat,chosen);return true;}
     }
     return false;
@@ -262,7 +265,7 @@
       const seat=s.turn;
       if(seat===0){if(s.needDraw){if(!draw(s,0,false))return s;s.needDraw=false;}return s;}
       if(s.needDraw){if(!draw(s,seat,false))return s;s.needDraw=false;}
-      const judged=s.mode==='mcr'&&s.turnSource!=='draw'?null:Judges.judge(s.mode,s,seat,'selfDraw');
+      const judged=s.turnSource!=='draw'?null:Judges.judge(s.mode,s,seat,'selfDraw');
       if(judged?.legal){applyWin(s,seat,'selfDraw',null,null,judged);if(s.phase==='ended')return s;nextTurn(s,seat);continue;}
       if(s.mode==='mcr'&&s.wall.length){
         const added=s.melds[seat].map((m,i)=>({m,i})).find(x=>x.m.type==='pung'&&s.hands[seat].includes(x.m.tiles[0]));
@@ -305,7 +308,7 @@
       return {phase:'claim',discard:p.tile,from:p.discarder,robKong:!!p.robKong,assessment:s.mode==='mcr'?win:null,actions:result};
     }
     if(s.phase!=='turn'||s.turn!==0)return null;
-    const win=s.mode==='mcr'&&s.turnSource!=='draw'?null:Judges.judge(s.mode,s,0,'selfDraw');
+    const win=s.turnSource!=='draw'?null:Judges.judge(s.mode,s,0,'selfDraw');
     const kongs=[];
     if(s.mode!=='am'&&s.wall.length){
       const c=counts(s.hands[0]);for(const tile of Object.keys(c))if(c[tile]===4&&s.melds[0].length<4)kongs.push({kind:'concealed',tile});
