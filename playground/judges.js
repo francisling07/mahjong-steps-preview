@@ -64,7 +64,7 @@
         if(tile===seats[seat])add('seatWind',1);
         if(tile===(roundWind||'z1'))add('roundWind',1);
       }
-      if(melds.length===0)add('concealed',1);
+      if(melds.every(m=>!!m.concealed))add('concealed',1);
       if(source==='selfDraw')add('selfDraw',1);
       const fan=details.reduce((n,x)=>n+x.fan,0);
       if(!best||fan>best.fan)best={fan,breakdown:details};

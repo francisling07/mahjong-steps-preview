@@ -1,78 +1,713 @@
 /* One shared, playable table for four rule sets. */
-(function(g){
+(function (g) {
   'use strict';
-  const E=g.MahjongFullPlayEngine,A=g.MahjongFullPlayAdvisor,J=g.MahjongPlaygroundJudges,art=g.MahjongTileArt,MCRF=g.MahjongMCRFans;
-  const L={
-    zh:{title:'完整牌桌操练',liveTable:'单屏牌桌',sub:'从发牌一直打到本局结束。你坐东家，其他三家由练习对手操作。',modes:{hk:'香港麻将',sc:'四川血战到底',am:'美式麻将',mcr:'中国国标'},start:'开始完整一局',restart:'同样牌序重开',new:'换一副牌',back:'返回首页',short:'单次关键决策局',scExchange:'开启换三张',amSecond:'再进行第二轮 Charleston',you:'你 · 东',seats:['你 · 东','南家','西家','北家'],wall:'牌墙',turn:'轮到',hand:'你的手牌',discards:'弃牌',melds:'公开牌组',points:'分数变化',choose:'点击手牌选择',submit:'打出所选牌',selectToDiscard:'轮到你出牌：先点选一张手牌',currentDiscard:'当前弃牌',latestDiscard:'最近弃牌',justDiscarded:'打出',drew:'摸进',replacementDraw:'补摸',newTile:'新摸',continue:'继续摸打',pass3:'传出所选三张',exchange3:'换出所选三张',missing:'选择定缺花色',win:'胡牌',selfDraw:'自摸',discardWin:'点炮胡',chow:'吃',pung:'碰',kong:'杠',addedKong:'加杠',concealedKong:'暗杠',roots:'根',pass:'过牌',hint:'局面提示',advice:'出牌建议',close:'关闭提示',scopeLabel:'教学规则范围',keep:'建议保留',visible:'只依据你的手牌和公开牌；不会查看对手暗牌或未来牌墙。',scope:'教学版裁定：香港采用无花、三番起胡的常见番种子集；四川采用已实现的基础番型与杠分；美式使用原创教学卡样及简化支付。复杂桌规和全部番种仍以正式规则为准。',amScope:'原创卡样不代表 NMJL 年度卡，也不能用于官方对局。',exchange:'换牌',charleston:'Charleston 传牌',claim:'响应弃牌',playing:'摸打中',ended:'本局结束',draw:'牌墙摸尽',winResult:'有人胡牌',threeWins:'三家胡牌，本局结束',safety:'本局因保护限制结束',error:'此步无法执行，请重新选择。',revealed:'已公开',unknown:'暗牌',replay:'本局经过',resultLabel:'结算',seed:'牌序编号',suits:{m:'万',p:'筒',s:'条'},phaseNotice:'先完成开局步骤',flower:'花牌按练习版作为普通牌处理。',mcrScope:'国标牌桌使用 144 张牌、自动补花和 8 分起和。自动算番只覆盖已验证的常用番种；其他完整牌型可自主核分并继续此局。',mcrReview:'自主核分',mcrExplain:'这手牌结构成立。请选择你已核对的有效番种；系统只检查合计达到 8 分，不验证所选番种及排除关系。花牌在起和后另加。',mcrConfirm:'按所选番种和牌',mcrCancel:'返回牌桌',mcrSelected:'已选番种',mcrFlower:'花牌',mcrAuto:'系统已识别'},
-    tw:{title:'完整牌桌操練',liveTable:'單屏牌桌',sub:'從發牌一直打到本局結束。你坐東家，其他三家由練習對手操作。',modes:{hk:'香港麻雀',sc:'四川血戰到底',am:'美式麻雀',mcr:'中國國標'},start:'開始完整一局',restart:'同樣牌序重開',new:'換一副牌',back:'返回首頁',short:'單次關鍵決策局',scExchange:'開啟換三張',amSecond:'再進行第二輪 Charleston',you:'你 · 東',seats:['你 · 東','南家','西家','北家'],wall:'牌牆',turn:'輪到',hand:'你的手牌',discards:'棄牌',melds:'公開牌組',points:'分數變化',choose:'點擊手牌選擇',submit:'打出所選牌',selectToDiscard:'輪到你出牌：先點選一張手牌',currentDiscard:'當前棄牌',latestDiscard:'最近棄牌',justDiscarded:'打出',drew:'摸進',replacementDraw:'補摸',newTile:'新摸',continue:'繼續摸打',pass3:'傳出所選三張',exchange3:'換出所選三張',missing:'選擇定缺花色',win:'胡牌',selfDraw:'自摸',discardWin:'放銃胡',chow:'吃',pung:'碰',kong:'槓',addedKong:'加槓',concealedKong:'暗槓',roots:'根',pass:'過牌',hint:'局面提示',advice:'出牌建議',close:'關閉提示',scopeLabel:'教學規則範圍',keep:'建議保留',visible:'只依據你的手牌和公開牌；不會查看對手暗牌或未來牌牆。',scope:'教學版裁定：香港採用無花、三番起胡的常見番種子集；四川採用已實作的基礎番型與槓分；美式使用原創教學卡樣及簡化支付。複雜桌規和全部番種仍以正式規則為準。',amScope:'原創卡樣不代表 NMJL 年度卡，也不能用於官方對局。',exchange:'換牌',charleston:'Charleston 傳牌',claim:'響應棄牌',playing:'摸打中',ended:'本局結束',draw:'牌牆摸盡',winResult:'有人胡牌',threeWins:'三家胡牌，本局結束',safety:'本局因保護限制結束',error:'此步無法執行，請重新選擇。',revealed:'已公開',unknown:'暗牌',replay:'本局經過',resultLabel:'結算',seed:'牌序編號',suits:{m:'萬',p:'筒',s:'索'},phaseNotice:'先完成開局步驟',flower:'花牌按練習版作為普通牌處理。',mcrScope:'國標牌桌使用 144 張牌、自動補花和 8 分起和。自動算番只涵蓋已驗證的常用番種；其他完整牌型可自主核分並繼續此局。',mcrReview:'自主核分',mcrExplain:'這手牌結構成立。請選擇已核對的有效番種；系統只檢查合計達 8 分，不驗證所選番種及排除關係。花牌在起和後另加。',mcrConfirm:'按所選番種和牌',mcrCancel:'返回牌桌',mcrSelected:'已選番種',mcrFlower:'花牌',mcrAuto:'系统已识别'},
-    en:{title:'Full Table Playground',liveTable:'Live table',sub:'Play from the deal until the hand ends. You sit East against three training bots.',modes:{hk:'Hong Kong',sc:'Sichuan Blood Battle',am:'American',mcr:'Chinese Official (MCR)'},start:'Start a full hand',restart:'Replay same deal',new:'New deal',back:'Back home',short:'One-decision scenes',scExchange:'Exchange three tiles',amSecond:'Add second Charleston',you:'You · East',seats:['You · East','South','West','North'],wall:'Wall',turn:'Turn',hand:'Your hand',discards:'Discards',melds:'Exposed groups',points:'Point change',choose:'Select tiles in your hand',submit:'Discard selected tile',selectToDiscard:'Your turn: select a tile to discard',currentDiscard:'Current discard',latestDiscard:'Latest discard',justDiscarded:'discarded',drew:'drew',replacementDraw:'drew a replacement',newTile:'New draw',continue:'Continue',pass3:'Pass selected three',exchange3:'Exchange selected three',missing:'Choose missing suit',win:'Declare win',selfDraw:'Self draw',discardWin:'Discard win',chow:'Chow',pung:'Pung',kong:'Kong',addedKong:'Added kong',concealedKong:'Concealed kong',roots:'roots',pass:'Pass',hint:'Situation hint',advice:'Discard suggestion',close:'Close hint',scopeLabel:'Teaching rules',keep:'Keep connected tiles',visible:'Uses only your hand and public tiles. It never reads hidden hands or future wall tiles.',scope:'Teaching adjudication: Hong Kong uses a no-flower, three-fan common-pattern subset; Sichuan uses implemented core patterns and kong payments; American uses an original teaching card and simplified payments. Check formal rules for advanced cases.',amScope:'The original practice card is not an NMJL annual card and cannot be used for official play.',exchange:'Exchange',charleston:'Charleston',claim:'Respond to discard',playing:'Playing',ended:'Hand ended',draw:'Wall exhausted',winResult:'A player won',threeWins:'Three players won',safety:'Hand ended at safety limit',error:'That action is unavailable. Choose again.',revealed:'Exposed',unknown:'Hidden tiles',replay:'Hand history',resultLabel:'Result',seed:'Deal seed',suits:{m:'Craks',p:'Dots',s:'Bams'},phaseNotice:'Complete the opening step',flower:'Flowers are treated as ordinary teaching tiles.',mcrScope:'MCR uses 144 tiles, automatic flower replacement and an eight-point minimum. Automatic scoring covers a verified common subset; use self review for other completed shapes.',mcrReview:'Self review score',mcrExplain:'This hand has a winning shape. Select fans you have verified. The tool checks the eight-point total only; it does not verify selected fan conditions or exclusions. Add flowers after qualifying.',mcrConfirm:'Declare with selected fans',mcrCancel:'Return to table',mcrSelected:'Selected fans',mcrFlower:'Flowers',mcrAuto:'Automatically recognized'}
+
+  const E = g.MahjongFullPlayEngine;
+  const A = g.MahjongFullPlayAdvisor;
+  const art = g.MahjongTileArt;
+  const MCRF = g.MahjongMCRFans;
+  const Utils = g.MahjongUtils || null;
+
+  const L = {
+    zh: {
+      title: '完整牌桌操练',
+      liveTable: '单屏牌桌',
+      sub: '从发牌一直打到本局结束。你坐东家，其他三家由练习对手操作。',
+      modes: { hk: '香港麻将', sc: '四川血战到底', am: '美式麻将', mcr: '中国国标' },
+      start: '开始完整一局',
+      restart: '同样牌序重开',
+      new: '换一副牌',
+      back: '返回首页',
+      short: '单次关键决策局',
+      scExchange: '开启换三张',
+      amSecond: '再进行第二轮 Charleston',
+      you: '你 · 东',
+      seats: ['你 · 东', '南家', '西家', '北家'],
+      wall: '牌墙',
+      turn: '轮到',
+      hand: '你的手牌',
+      discards: '弃牌',
+      melds: '公开牌组',
+      points: '分数变化',
+      choose: '点击手牌选择',
+      submit: '打出所选牌',
+      selectToDiscard: '轮到你出牌：先点选一张手牌',
+      currentDiscard: '当前弃牌',
+      latestDiscard: '最近弃牌',
+      justDiscarded: '打出',
+      drew: '摸进',
+      replacementDraw: '补摸',
+      newTile: '新摸',
+      continue: '继续摸打',
+      pass3: '传出所选三张',
+      exchange3: '换出所选三张',
+      missing: '选择定缺花色',
+      win: '胡牌',
+      selfDraw: '自摸',
+      discardWin: '点炮胡',
+      chow: '吃',
+      pung: '碰',
+      kong: '杠',
+      addedKong: '加杠',
+      concealedKong: '暗杠',
+      roots: '根',
+      pass: '过牌',
+      hint: '局面提示',
+      advice: '出牌建议',
+      close: '关闭提示',
+      scopeLabel: '教学规则范围',
+      keep: '建议保留',
+      visible: '只依据你的手牌和公开牌；不会查看对手暗牌或未来牌墙。',
+      scope: '教学版裁定：香港采用无花、三番起胡的常见番种子集；四川采用已实现的基础番型与杠分；美式使用原创教学卡样及简化支付。复杂桌规和全部番种仍以正式规则为准。',
+      amScope: '原创卡样不代表 NMJL 年度卡，也不能用于官方对局。',
+      exchange: '换牌',
+      charleston: 'Charleston 传牌',
+      claim: '响应弃牌',
+      playing: '摸打中',
+      ended: '本局结束',
+      draw: '牌墙摸尽',
+      winResult: '有人胡牌',
+      threeWins: '三家胡牌，本局结束',
+      safety: '本局因保护限制结束',
+      error: '此步无法执行，请重新选择。',
+      revealed: '已公开',
+      unknown: '暗牌',
+      replay: '本局经过',
+      resultLabel: '结算',
+      seed: '牌序编号',
+      suits: { m: '万', p: '筒', s: '条' },
+      phaseNotice: '先完成开局步骤',
+      flower: '花牌按练习版作为普通牌处理。',
+      mcrScope: '国标牌桌使用 144 张牌、自动补花和 8 分起和。自动算番只覆盖已验证的常用番种；其他完整牌型可自主核分并继续此局。',
+      mcrReview: '自主核分',
+      mcrExplain: '这手牌结构成立。请选择你已核对的有效番种；系统只检查合计达到 8 分，不验证所选番种及排除关系。花牌在起和后另加。',
+      mcrConfirm: '按所选番种和牌',
+      mcrCancel: '返回牌桌',
+      mcrSelected: '已选番种',
+      mcrFlower: '花牌',
+      mcrAuto: '系统已识别'
+    },
+    tw: {
+      title: '完整牌桌操練',
+      liveTable: '單屏牌桌',
+      sub: '從發牌一直打到本局結束。你坐東家，其他三家由練習對手操作。',
+      modes: { hk: '香港麻雀', sc: '四川血戰到底', am: '美式麻雀', mcr: '中國國標' },
+      start: '開始完整一局',
+      restart: '同樣牌序重開',
+      new: '換一副牌',
+      back: '返回首頁',
+      short: '單次關鍵決策局',
+      scExchange: '開啟換三張',
+      amSecond: '再進行第二輪 Charleston',
+      you: '你 · 東',
+      seats: ['你 · 東', '南家', '西家', '北家'],
+      wall: '牌牆',
+      turn: '輪到',
+      hand: '你的手牌',
+      discards: '棄牌',
+      melds: '公開牌組',
+      points: '分數變化',
+      choose: '點擊手牌選擇',
+      submit: '打出所選牌',
+      selectToDiscard: '輪到你出牌：先點選一張手牌',
+      currentDiscard: '當前棄牌',
+      latestDiscard: '最近棄牌',
+      justDiscarded: '打出',
+      drew: '摸進',
+      replacementDraw: '補摸',
+      newTile: '新摸',
+      continue: '繼續摸打',
+      pass3: '傳出所選三張',
+      exchange3: '換出所選三張',
+      missing: '選擇定缺花色',
+      win: '胡牌',
+      selfDraw: '自摸',
+      discardWin: '放銃胡',
+      chow: '吃',
+      pung: '碰',
+      kong: '槓',
+      addedKong: '加槓',
+      concealedKong: '暗槓',
+      roots: '根',
+      pass: '過牌',
+      hint: '局面提示',
+      advice: '出牌建議',
+      close: '關閉提示',
+      scopeLabel: '教學規則範圍',
+      keep: '建議保留',
+      visible: '只依據你的手牌和公開牌；不會查看對手暗牌或未來牌牆。',
+      scope: '教學版裁定：香港採用無花、三番起胡的常見番種子集；四川採用已實作的基礎番型與槓分；美式使用原創教學卡樣及簡化支付。複雜桌規和全部番種仍以正式規則為準。',
+      amScope: '原創卡樣不代表 NMJL 年度卡，也不能用於官方對局。',
+      exchange: '換牌',
+      charleston: 'Charleston 傳牌',
+      claim: '響應棄牌',
+      playing: '摸打中',
+      ended: '本局結束',
+      draw: '牌牆摸盡',
+      winResult: '有人胡牌',
+      threeWins: '三家胡牌，本局結束',
+      safety: '本局因保護限制結束',
+      error: '此步無法執行，請重新選擇。',
+      revealed: '已公開',
+      unknown: '暗牌',
+      replay: '本局經過',
+      resultLabel: '結算',
+      seed: '牌序編號',
+      suits: { m: '萬', p: '筒', s: '索' },
+      phaseNotice: '先完成開局步驟',
+      flower: '花牌按練習版作為普通牌處理。',
+      mcrScope: '國標牌桌使用 144 張牌、自動補花和 8 分起和。自動算番只涵蓋已驗證的常用番種；其他完整牌型可自主核分並繼續此局。',
+      mcrReview: '自主核分',
+      mcrExplain: '這手牌結構成立。請選擇已核對的有效番種；系統只檢查合計達 8 分，不驗證所選番種及排除關係。花牌在起和後另加。',
+      mcrConfirm: '按所選番種和牌',
+      mcrCancel: '返回牌桌',
+      mcrSelected: '已選番種',
+      mcrFlower: '花牌',
+      mcrAuto: '系統已識別'
+    },
+    en: {
+      title: 'Full Table Playground',
+      liveTable: 'Live table',
+      sub: 'Play from the deal until the hand ends. You sit East against three training bots.',
+      modes: { hk: 'Hong Kong', sc: 'Sichuan Blood Battle', am: 'American', mcr: 'Chinese Official (MCR)' },
+      start: 'Start a full hand',
+      restart: 'Replay same deal',
+      new: 'New deal',
+      back: 'Back home',
+      short: 'One-decision scenes',
+      scExchange: 'Exchange three tiles',
+      amSecond: 'Add second Charleston',
+      you: 'You · East',
+      seats: ['You · East', 'South', 'West', 'North'],
+      wall: 'Wall',
+      turn: 'Turn',
+      hand: 'Your hand',
+      discards: 'Discards',
+      melds: 'Exposed groups',
+      points: 'Point change',
+      choose: 'Select tiles in your hand',
+      submit: 'Discard selected tile',
+      selectToDiscard: 'Your turn: select a tile to discard',
+      currentDiscard: 'Current discard',
+      latestDiscard: 'Latest discard',
+      justDiscarded: 'discarded',
+      drew: 'drew',
+      replacementDraw: 'drew a replacement',
+      newTile: 'New draw',
+      continue: 'Continue',
+      pass3: 'Pass selected three',
+      exchange3: 'Exchange selected three',
+      missing: 'Choose missing suit',
+      win: 'Declare win',
+      selfDraw: 'Self draw',
+      discardWin: 'Discard win',
+      chow: 'Chow',
+      pung: 'Pung',
+      kong: 'Kong',
+      addedKong: 'Added kong',
+      concealedKong: 'Concealed kong',
+      roots: 'roots',
+      pass: 'Pass',
+      hint: 'Situation hint',
+      advice: 'Discard suggestion',
+      close: 'Close hint',
+      scopeLabel: 'Teaching rules',
+      keep: 'Keep connected tiles',
+      visible: 'Uses only your hand and public tiles. It never reads hidden hands or future wall tiles.',
+      scope: 'Teaching adjudication: Hong Kong uses a no-flower, three-fan common-pattern subset; Sichuan uses implemented core patterns and kong payments; American uses an original teaching card and simplified payments. Check formal rules for advanced cases.',
+      amScope: 'The original practice card is not an NMJL annual card and cannot be used for official play.',
+      exchange: 'Exchange',
+      charleston: 'Charleston',
+      claim: 'Respond to discard',
+      playing: 'Playing',
+      ended: 'Hand ended',
+      draw: 'Wall exhausted',
+      winResult: 'A player won',
+      threeWins: 'Three players won',
+      safety: 'Hand ended at safety limit',
+      error: 'That action is unavailable. Choose again.',
+      revealed: 'Exposed',
+      unknown: 'Hidden tiles',
+      replay: 'Hand history',
+      resultLabel: 'Result',
+      seed: 'Deal seed',
+      suits: { m: 'Craks', p: 'Dots', s: 'Bams' },
+      phaseNotice: 'Complete the opening step',
+      flower: 'Flowers are treated as ordinary teaching tiles.',
+      mcrScope: 'MCR uses 144 tiles, automatic flower replacement and an eight-point minimum. Automatic scoring covers a verified common subset; use self review for other completed shapes.',
+      mcrReview: 'Self review score',
+      mcrExplain: 'This hand has a winning shape. Select fans you have verified. The tool checks the eight-point total only; it does not verify selected fan conditions or exclusions. Add flowers after qualifying.',
+      mcrConfirm: 'Declare with selected fans',
+      mcrCancel: 'Return to table',
+      mcrSelected: 'Selected fans',
+      mcrFlower: 'Flowers',
+      mcrAuto: 'Automatically recognized'
+    }
   };
-  let lang='zh',mode='hk',state=null,selected=[],showHint=false,showAdvice=false,feedback='',motion=null,showResult=true,showMcrReview=false,manualFans=[],options={scExchange:false,amSecondCharleston:false};
-  const c=()=>L[lang];const esc=x=>String(x??'').replace(/[&<>"']/g,y=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[y]));
-  function tileName(t){if(t==='j1')return 'Joker';if(t[0]==='f')return ['春','夏','秋','冬','梅','兰','菊','竹'][Number(t[1])-1]||t;if(t[0]==='z')return (lang==='en'?['East','South','West','North','Red','Green','White']:lang==='tw'?['東','南','西','北','中','發','白']:['东','南','西','北','中','发','白'])[Number(t[1])-1]||t;return `${t[1]} ${c().suits[t[0]]}`;}
-  function tile(t){return `<span class="tile" role="img" aria-label="${esc(tileName(t))}">${art.svg(t)}</span>`;}
-  function choices(){return ['hk','sc','am','mcr'].map(x=>`<button class="pg-tab ${mode===x?'active':''}" data-full-mode="${x}" aria-pressed="${mode===x}">${c().modes[x]}</button>`).join('');}
-  function setup(){return `<div class="workspace pg-page fp-page"><button class="back" data-full-back>${c().back}</button><div class="eyebrow pg-eyebrow">FULL TABLE PLAYGROUND</div><h1>${c().title}</h1><p class="sub">${c().sub}</p><div class="pg-tabs">${choices()}</div><div class="fp-setup"><h2>${c().modes[mode]}</h2>${mode==='sc'?`<button class="fp-toggle" data-full-option="scExchange" aria-pressed="${options.scExchange}">${options.scExchange?'✓ ':'○ '}${c().scExchange}</button>`:''}${mode==='am'?`<button class="fp-toggle" data-full-option="amSecondCharleston" aria-pressed="${options.amSecondCharleston}">${options.amSecondCharleston?'✓ ':'○ '}${c().amSecond}</button><p class="pg-scope">${c().amScope} ${c().flower}</p>`:''}${mode==='mcr'?`<p class="pg-scope">${c().mcrScope}</p>`:''}<div class="fp-setup-actions"><button class="btn" data-full-start>${c().start} →</button>${mode==='mcr'?'':`<button class="btn alt" data-full-short>${c().short} →</button>`}</div></div><p class="pg-scope">${c().scope}</p></div>`;}
-  function latestVisibleEvent(){for(let i=state.history.length-1;i>=0;i--){const e=state.history[i];if(['draw','replacement'].includes(e.type)&&e.seat===0)return e;if(['discard','claim','kong','kong-attempt','joker-exchange','win','flower'].includes(e.type))return e;}return null;}
-  function focusLabel(e){if(e.type==='kong-attempt')return `${c().seats[e.seat]} ${c().addedKong}`;if(e.type==='flower')return `${c().seats[e.seat]} ${c().mcrFlower}`;if(e.type==='discard')return `${c().seats[e.seat]} ${c().justDiscarded}`;if(['draw','replacement'].includes(e.type))return `${c().seats[0]} ${e.type==='replacement'?c().replacementDraw:c().drew}`;if(e.type==='claim')return `${c().seats[e.seat]} ${c()[e.kind]||c().claim}`;if(e.type==='kong')return `${c().seats[e.seat]} ${c().kong}`;return `${c().seats[e.seat]} ${eventName(e.type)}`;}
-  function exposed(i,focus,animate){return state.melds[i].map((m,j)=>`<span class="fp-meld-set${focus?.seat===i&&['claim','kong'].includes(focus.type)&&j===state.melds[i].length-1?' fresh':''}${animate&&focus?.seat===i&&['claim','kong'].includes(focus.type)&&j===state.melds[i].length-1?' moving':''}"><small>${c()[m.type]||c().melds}</small>${m.tiles.map(tile).join('')}</span>`).join('');}
-  function opponent(i,pos){const n=state.hands[i].length;return `<div class="fp-opponent fp-opponent-${pos}${state.active[i]?'':' inactive'}"><div class="fp-opponent-label"><b>${c().seats[i]}</b><span>${n} ${c().unknown} · ${state.points[i]>0?'+':''}${state.points[i]}</span></div><div class="fp-backs" aria-label="${esc(c().unknown)} ${n}">${Array.from({length:Math.min(n,11)},()=>'<i aria-hidden="true"></i>').join('')}</div></div>`;}
-  function river(i,pos,focus,animate){const pile=state.discards[i],isCurrent=state.phase==='claim'&&!state.pending?.robKong&&state.pending?.discarder===i,landed=animate&&focus?.type==='discard'&&focus.seat===i;return `<div class="fp-river fp-river-${pos}" aria-label="${esc(c().seats[i]+' · '+c().discards+' · '+c().melds)}"><div class="fp-river-label">${c().seats[i]} <small>${pile.length} ${c().discards}</small></div>${state.mode==='mcr'&&state.flowers[i].length?`<div class="fp-flower-zone"><span>${c().mcrFlower}</span>${state.flowers[i].map(tile).join('')}</div>`:''}${state.melds[i].length?`<div class="fp-zone-melds"><span>${c().melds}</span>${exposed(i,focus,animate)}</div>`:''}<div class="fp-river-tiles">${pile.map((t,j)=>`<span class="fp-river-tile${isCurrent&&j===pile.length-1?' current':''}${landed&&j===pile.length-1?' landed':''}">${tile(t)}</span>`).join('')||'<span class="fp-river-empty">·</span>'}</div></div>`;}
-  function tableCenter(focus,animate){return `<div class="fp-table-center"><div class="fp-wall-mark"><span class="fp-wall-backs"><i></i><i></i><i></i></span><b>${state.wall.length}</b><small>${c().wall}</small></div>${focus?`<div class="fp-table-last${state.phase==='claim'?' active':''}${focus.type==='draw'||focus.type==='replacement'?' draw-event':''}${animate?' moving':''}" role="status" aria-live="polite"><small>${esc(focusLabel(focus))}</small>${focus.tile?tile(focus.tile):''}<b>${focus.tile?esc(tileName(focus.tile)):''}</b></div>`:''}</div>`;}
-  function board(focus,animate){return `<div class="fp-table" aria-label="${esc(c().title)}">${opponent(2,'top')}${opponent(3,'left')}${opponent(1,'right')}<div class="fp-play-area">${river(2,'top',focus,animate)}${river(3,'left',focus,animate)}${tableCenter(focus,animate)}${river(1,'right',focus,animate)}${river(0,'bottom',focus,animate)}</div></div>`;}
-  function rack(focus,animate){
-    const a=E.available(state),canChoose=['turn','exchange','charleston'].includes(a?.phase),canDiscard=a?.phase==='turn'?a.discards:[];
-    const drawn=focus?.seat===0&&['draw','replacement'].includes(focus.type)?state.hands[0].lastIndexOf(focus.tile):-1;
-    const handButton=(t,i,isDraw)=>`<button class="fp-tile${selected.includes(i)?' selected':''}${isDraw?' new-draw':''}${isDraw&&animate?' moving':''}" data-full-select="${i}" aria-pressed="${selected.includes(i)}" aria-label="${esc(tileName(t))}" ${!canChoose||a.phase==='turn'&&!canDiscard.includes(i)?'disabled':''}>${tile(t)}${isDraw?`<small class="fp-new-label">${c().newTile}</small>`:''}</button>`;
-    const regular=state.hands[0].map((t,i)=>i===drawn?'':handButton(t,i,false)).join('');
-    const newTile=drawn>=0?`<span class="fp-draw-slot">${handButton(state.hands[0][drawn],drawn,true)}</span>`:'';
-    return `<section class="fp-own-seat"><div class="fp-own-label"><b>${c().seats[0]}</b><span>${state.points[0]>0?'+':''}${state.points[0]} · ${c().hand} ${state.hands[0].length}</span></div><div class="fp-rack">${regular}${newTile}</div></section>`;
+
+  let lang = 'zh';
+  let mode = 'hk';
+  let state = null;
+  let selected = [];
+  let showHint = false;
+  let showAdvice = false;
+  let feedback = '';
+  let motion = null;
+  let showResult = true;
+  let showMcrReview = false;
+  let manualFans = [];
+  const options = { scExchange: false, amSecondCharleston: false };
+
+  const c = () => L[lang];
+  const esc = Utils
+    ? Utils.esc
+    : x => String(x ?? '').replace(/[&<>"']/g, y => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[y]));
+
+  function tileName(t) {
+    if (Utils) return Utils.tileName(t, lang, 'short');
+    if (t === 'j1') return 'Joker';
+    if (t[0] === 'f') {
+      const names = lang === 'en'
+        ? ['Spring', 'Summer', 'Autumn', 'Winter', 'Plum', 'Orchid', 'Chrysanthemum', 'Bamboo']
+        : lang === 'tw'
+          ? ['春', '夏', '秋', '冬', '梅', '蘭', '菊', '竹']
+          : ['春', '夏', '秋', '冬', '梅', '兰', '菊', '竹'];
+      return names[Number(t[1]) - 1] || t;
+    }
+    if (t[0] === 'z') {
+      const names = lang === 'en'
+        ? ['East', 'South', 'West', 'North', 'Red', 'Green', 'White']
+        : lang === 'tw'
+          ? ['東', '南', '西', '北', '中', '發', '白']
+          : ['东', '南', '西', '北', '中', '发', '白'];
+      return names[Number(t[1]) - 1] || t;
+    }
+    return `${t[1]} ${c().suits[t[0]]}`;
   }
-  function actions(){const a=E.available(state);if(!a||a.phase==='ended')return '';
-    let buttons='',lead='';
-    if(a.phase==='exchange'||a.phase==='charleston'){lead=c().phaseNotice;buttons=`<button class="btn" data-full-send ${selected.length!==3?'disabled':''}>${a.phase==='exchange'?c().exchange3:c().pass3}</button>`;}
-    if(a.phase==='missing'){lead=c().missing;buttons=a.suits.map(x=>`<button class="btn alt" data-full-missing="${x}">${c().suits[x]}</button>`).join('');}
-    if(a.phase==='turn'){lead=c().selectToDiscard;buttons=`<button class="btn" data-full-discard ${selected.length!==1?'disabled':''}>${c().submit}${selected.length===1?' · '+esc(tileName(state.hands[0][selected[0]])):''}</button>${a.canWin?`<button class="btn fp-win-button" data-full-win>${c().win} · ${a.win.fan??a.win.base??a.win.value??a.win.totalFan}</button>`:''}${a.reviewWin?`<button class="btn alt" data-full-mcr-review>${c().mcrReview}</button>`:''}${a.kongs.map((k,i)=>`<button class="btn alt" data-full-kong="${i}">${k.kind==='added'?c().addedKong:c().concealedKong} ${esc(tileName(k.tile))}</button>`).join('')}${a.exchanges.map((x,i)=>`<button class="btn alt" data-full-joker="${i}">Joker ↔ ${esc(tileName(x.tile))}</button>`).join('')}`;}
-    if(a.phase==='claim'){lead=`${c().seats[a.from]} ${a.robKong?c().addedKong:c().justDiscarded} ${tile(a.discard)} <strong>${esc(tileName(a.discard))}</strong>`;buttons=a.actions.map(x=>`<button class="btn ${x.kind==='pass'?'fp-continue':'fp-call'}" data-full-claim="${esc(x.id)}">${x.kind==='pass'?c().continue:x.kind==='win'?c().win:x.kind==='review'?c().mcrReview:x.kind==='chow'?c().chow:x.kind==='pung'?c().pung:c().kong}${x.used.length?' · '+x.used.map(tileName).join(' '):''}</button>`).join('');}
-    return `<section class="fp-decision-bar${a.phase==='claim'?' is-claim':''}" aria-label="${esc(a.phase==='claim'?c().claim:c().choose)}"><div class="fp-decision-lead">${lead}</div><div class="fp-actions">${buttons}</div></section>`;
+
+  function tile(t) {
+    return `<span class="tile" role="img" aria-label="${esc(tileName(t))}">${art.svg(t)}</span>`;
   }
-  function guidance(){if(!showHint&&!showAdvice)return '';const h=A.hint(state),ad=A.advice(state);return `<aside class="fp-guide-panel"><button class="fp-guide-close" data-full-close-guide aria-label="${esc(c().close)}">×</button>${showHint?`<h2>${c().hint}</h2><p>${esc(h?.[lang]||'')}</p>`:''}${showAdvice&&ad?`<div class="fp-advice"><h2>${c().advice}</h2><b>${tile(ad.tile)} ${esc(tileName(ad.tile))}</b><p>${esc(ad.reason[lang])}</p>${ad.keep.length?`<small>${c().keep}: ${ad.keep.map(group=>group.map(tileName).join(' + ')).join(' / ')}</small>`:''}${ad.waitNote?`<small>${esc(ad.waitNote[lang])}</small>`:''}<small>${c().visible}</small></div>`:''}</aside>`;}
-  function winDetails(w){
-    const j=w.judged||{};
-    if(state.mode==='am')return esc(j.lineTitle?.[lang]||j.lineId||'');if(state.mode==='mcr')return esc((j.breakdown||[]).map(x=>`${x.name?.[lang]||x.no} ${x.fan}`).join(' · ')+(j.coverage==='self-reviewed'?' · '+c().mcrReview:''));
-    if(state.mode==='sc')return esc(`${j.base||''}${j.roots?` · ${j.roots} ${c().roots}`:''}`);
-    const names={allSequences:['平胡','平胡','All sequences'],allTriplets:['对对胡','對對胡','All triplets'],allHonors:['字一色','字一色','All honors'],fullFlush:['清一色','清一色','Full flush'],halfFlush:['混一色','混一色','Half flush'],dragon:['三元牌','三元牌','Dragon'],seatWind:['门风','門風','Seat wind'],roundWind:['圈风','圈風','Round wind'],concealed:['门清','門清','Concealed'],selfDraw:['自摸','自摸','Self draw'],orphans:['十三幺','十三么','Thirteen orphans']};
-    const k=lang==='zh'?0:lang==='tw'?1:2;
-    return esc((j.breakdown||[]).map(x=>`${names[x.id]?.[k]||x.id} ${x.fan}`).join(' · '));
+
+  function choices() {
+    return ['hk', 'sc', 'am', 'mcr']
+      .map(x => `<button class="pg-tab ${mode === x ? 'active' : ''}" data-full-mode="${x}" aria-pressed="${mode === x}">${c().modes[x]}</button>`)
+      .join('');
   }
-  function result(){if(state.phase!=='ended'||!showResult)return '';const r=state.result||{},title=r.type==='draw'?c().draw:r.type==='three-wins'?c().threeWins:r.type==='safety-stop'?c().safety:c().winResult;return `<section class="pg-result"><button class="fp-result-close" data-full-result-close aria-label="${esc(c().close)}">×</button><h2>${title}</h2>${state.winners.map(w=>`<p>${c().seats[w.seat]} · ${w.source==='selfDraw'?c().selfDraw:c().discardWin} · ${w.judged?.totalFan!==undefined?w.judged.totalFan+(lang==='en'?' points':' 分'):w.judged?.fan!==undefined?w.judged.fan+' 番':w.judged?.base!==undefined?String(w.judged.base):w.judged?.value??''}<br><small>${winDetails(w)}</small></p>`).join('')}<div class="fp-score">${state.points.map((p,i)=>`<span>${c().seats[i]} <b>${p>0?'+':''}${p}</b></span>`).join('')}</div><div class="fp-actions"><button class="btn" data-full-restart>${c().restart}</button><button class="btn alt" data-full-new>${c().new}</button></div></section>`;}
-  function eventName(type){const names={deal:['发牌','發牌','Deal'],draw:['摸牌','摸牌','Draw'],replacement:['补牌','補牌','Replacement draw'],'exchange-three':['换三张','換三張','Exchange three'],charleston:['传牌','傳牌','Charleston'],missing:['定缺','定缺','Missing suit'],discard:['出牌','出牌','Discard'],claim:['吃碰杠','吃碰槓','Claim'],'kong-payment':['杠分','槓分','Kong payment'],pass:['过牌','過牌','Pass'],win:['胡牌','胡牌','Win'],'round-draw':['流局','流局','Drawn hand'],kong:['杠牌','槓牌','Kong'],'joker-exchange':['换 Joker','換 Joker','Joker exchange'],'kong-attempt':['加杠待响应','加槓待回應','Added kong offered for robbing'],flower:['补花','補花','Flower replacement']};return names[type]?.[lang==='zh'?0:lang==='tw'?1:2]||type;}
-  function history(){return `<details class="fp-history-menu"><summary>${c().replay} · ${state.history.length}</summary><ol>${state.history.slice(-40).reverse().map(h=>`<li>${h.seat===null?'':c().seats[h.seat]+' · '}${esc(eventName(h.type))}${h.tile&&!(h.seat!==0&&['draw','replacement'].includes(h.type))?' · '+esc(tileName(h.tile)):''}</li>`).join('')}</ol></details>`;}
-  function mcrReviewPanel(){if(!showMcrReview||state?.mode!=='mcr')return '';const total=manualFans.reduce((n,no)=>n+(MCRF.byNo(no)?.points||0),0),assessed=E.available(state)?.assessment;let h=`<section class="pg-result fp-mcr-review" role="dialog" aria-modal="true"><button class="fp-result-close" data-full-mcr-cancel aria-label="${esc(c().mcrCancel)}">×</button><h2>${c().mcrReview}</h2><p>${c().mcrExplain}</p>${assessed?.breakdown?.length?`<p class="fp-mcr-auto">${c().mcrAuto}: ${assessed.baseFan} ${lang==='en'?'points':'分'} · ${assessed.breakdown.map(x=>esc(x.name?.[lang]||x.no)).join('、')}</p>`:''}<p><strong>${c().mcrSelected}: ${total} ${lang==='en'?'points':'分'}</strong> · ${c().mcrFlower}: ${state.flowers[0].length}</p><div class="fp-mcr-fans">`;for(const group of MCRF.groupByPoints()){if(group.points===1&&group.fans.every(f=>f.no===81))continue;h+=`<details><summary>${group.points} ${lang==='en'?'points':'分'}</summary><div>`;for(const f of group.fans)if(f.no!==81)h+=`<button class="fp-mcr-fan${manualFans.includes(f.no)?' selected':''}" data-full-mcr-fan="${f.no}" aria-pressed="${manualFans.includes(f.no)}">${esc(f.name[lang])} · ${f.points}</button>`;h+='</div></details>';}return h+`</div><div class="fp-actions"><button class="btn" data-full-mcr-confirm ${total<8?'disabled':''}>${c().mcrConfirm}</button><button class="btn alt" data-full-mcr-cancel>${c().mcrCancel}</button></div></section>`;}
-  function game(){const focus=latestVisibleEvent(),animate=!!motion&&motion===focus,ad=A.advice(state);motion=null;return `<div class="fp-game fp-page"><div class="fp-game-head"><button class="fp-game-back" data-full-back>${c().back}</button><div class="fp-game-title"><strong>${c().modes[state.mode]} · ${c().liveTable}</strong><small>${c().seed} ${state.seed}</small></div><div class="fp-game-tools"><button data-full-hint aria-pressed="${showHint}">${c().hint}</button>${ad?`<button data-full-advice aria-pressed="${showAdvice}">${c().advice}</button>`:''}${state.phase==='ended'&&!showResult?`<button data-full-result-open>${c().resultLabel}</button>`:''}${history()}<details class="fp-scope-menu"><summary>${c().scopeLabel}</summary><p>${c().scope}${state.mode==='am'?' '+c().amScope+' '+c().flower:state.mode==='mcr'?' '+c().mcrScope:''}</p></details><button data-full-restart>${c().restart}</button><button data-full-new>${c().new}</button></div></div><div class="fp-table-frame">${board(focus,animate)}${actions()}${rack(focus,animate)}</div>${feedback?`<div class="fp-game-toast" role="status">${c().error}</div>`:''}${guidance()}${mcrReviewPanel()}${result()}</div>`;}
-  function apply(action){const before=state.history.length,r=E.act(state,action);if(r.accepted){state=r.state;selected=[];feedback='';showAdvice=false;showMcrReview=false;manualFans=[];if(state.phase==='ended'){showResult=true;showHint=false;}const recent=state.history.slice(before).reverse();motion=recent.find(e=>['discard','claim','kong','kong-attempt','joker-exchange','win','flower'].includes(e.type)||['draw','replacement'].includes(e.type)&&e.seat===0)||null;}else feedback=r.reason;}
-  function dispatch(el){const d=el.dataset||{};
-    if(d.fullBack!==undefined)return 'back';
-    if(d.fullShort!==undefined)return 'short';
-    if(d.fullMode!==undefined){mode=d.fullMode;state=null;return 'view';}
-    if(d.fullOption!==undefined){options[d.fullOption]=!options[d.fullOption];return 'local';}
-    if(d.fullStart!==undefined||d.fullNew!==undefined){mode=state?.mode||mode;state=E.start(mode,Math.floor(Math.random()*4294967295),options);selected=[];motion=state?.history.at(-1)||null;feedback='';showHint=false;showAdvice=false;showResult=true;return 'view';}
-    if(d.fullMcrReview!==undefined){showMcrReview=true;manualFans=[...new Set((E.available(state)?.assessment?.breakdown||[]).map(x=>x.no).filter(no=>no<81))];return 'local';}if(d.fullMcrCancel!==undefined){showMcrReview=false;manualFans=[];return 'local';}if(d.fullMcrFan!==undefined){const no=Number(d.fullMcrFan);if(MCRF?.byNo(no)&&no<81)manualFans=manualFans.includes(no)?manualFans.filter(x=>x!==no):manualFans.concat(no);return 'local';}if(d.fullMcrConfirm!==undefined){apply({type:'manual-win',fanNos:manualFans.slice()});return 'local';}if(d.fullRestart!==undefined){state=E.start(state.mode,state.seed,state.options);selected=[];motion=state?.history.at(-1)||null;feedback='';showHint=false;showAdvice=false;showResult=true;return 'view';}
-    if(!state)return 'local';
-    if(d.fullSelect!==undefined){const i=Number(d.fullSelect),a=E.available(state),max=['exchange','charleston'].includes(a?.phase)?3:1;selected=selected.includes(i)?selected.filter(x=>x!==i):selected.length<max?selected.concat(i):[i];feedback='';return 'local';}
-    if(d.fullHint!==undefined){showHint=!showHint;return 'local';}
-    if(d.fullAdvice!==undefined){showAdvice=!showAdvice;return 'local';}
-    if(d.fullCloseGuide!==undefined){showHint=false;showAdvice=false;return 'local';}
-    if(d.fullResultClose!==undefined){showResult=false;return 'local';}
-    if(d.fullResultOpen!==undefined){showResult=true;return 'local';}
-    if(d.fullSend!==undefined)apply({type:state.phase==='exchange'?'exchange':'charleston',indices:selected.slice().sort((a,b)=>a-b)});
-    if(d.fullMissing!==undefined)apply({type:'missing',suit:d.fullMissing});
-    if(d.fullDiscard!==undefined)apply({type:'discard',index:selected[0]});
-    if(d.fullWin!==undefined)apply({type:'win'});
-    if(d.fullClaim!==undefined){if(d.fullClaim==='review'){showMcrReview=true;manualFans=[...new Set((E.available(state)?.assessment?.breakdown||[]).map(x=>x.no).filter(no=>no<81))];return 'local';}apply({type:'claim',id:d.fullClaim});}
-    if(d.fullKong!==undefined){const k=E.available(state).kongs[Number(d.fullKong)];if(k)apply({type:'kong',...k});}
-    if(d.fullJoker!==undefined){const x=E.available(state).exchanges[Number(d.fullJoker)];if(x)apply({type:'joker-exchange',...x});}
+
+  function setup() {
+    return `<div class="workspace pg-page fp-page">
+      <button class="back" data-full-back>${c().back}</button>
+      <div class="eyebrow pg-eyebrow">FULL TABLE PLAYGROUND</div>
+      <h1>${c().title}</h1>
+      <p class="sub">${c().sub}</p>
+      <div class="pg-tabs">${choices()}</div>
+      <div class="fp-setup">
+        <h2>${c().modes[mode]}</h2>
+        ${mode === 'sc' ? `<button class="fp-toggle" data-full-option="scExchange" aria-pressed="${options.scExchange}">${options.scExchange ? '✓ ' : '○ '}${c().scExchange}</button>` : ''}
+        ${mode === 'am' ? `<button class="fp-toggle" data-full-option="amSecondCharleston" aria-pressed="${options.amSecondCharleston}">${options.amSecondCharleston ? '✓ ' : '○ '}${c().amSecond}</button><p class="pg-scope">${c().amScope} ${c().flower}</p>` : ''}
+        ${mode === 'mcr' ? `<p class="pg-scope">${c().mcrScope}</p>` : ''}
+        <div class="fp-setup-actions">
+          <button class="btn" data-full-start>${c().start} →</button>
+          ${mode === 'mcr' ? '' : `<button class="btn alt" data-full-short>${c().short} →</button>`}
+        </div>
+      </div>
+      <p class="pg-scope">${c().scope}</p>
+    </div>`;
+  }
+
+  function latestVisibleEvent() {
+    for (let i = state.history.length - 1; i >= 0; i--) {
+      const e = state.history[i];
+      if (['draw', 'replacement'].includes(e.type) && e.seat === 0) return e;
+      if (['discard', 'claim', 'kong', 'kong-attempt', 'joker-exchange', 'win', 'flower'].includes(e.type)) return e;
+    }
+    return null;
+  }
+
+  function focusLabel(e) {
+    if (e.type === 'kong-attempt') return `${c().seats[e.seat]} ${c().addedKong}`;
+    if (e.type === 'flower') return `${c().seats[e.seat]} ${c().mcrFlower}`;
+    if (e.type === 'discard') return `${c().seats[e.seat]} ${c().justDiscarded}`;
+    if (['draw', 'replacement'].includes(e.type)) return `${c().seats[0]} ${e.type === 'replacement' ? c().replacementDraw : c().drew}`;
+    if (e.type === 'claim') return `${c().seats[e.seat]} ${c()[e.kind] || c().claim}`;
+    if (e.type === 'kong') return `${c().seats[e.seat]} ${c().kong}`;
+    return `${c().seats[e.seat]} ${eventName(e.type)}`;
+  }
+
+  function exposed(i, focus, animate) {
+    return state.melds[i]
+      .map((m, j) => {
+        const isFresh = focus?.seat === i && ['claim', 'kong'].includes(focus.type) && j === state.melds[i].length - 1;
+        return `<span class="fp-meld-set${isFresh ? ' fresh' : ''}${animate && isFresh ? ' moving' : ''}"><small>${c()[m.type] || c().melds}</small>${m.tiles.map(tile).join('')}</span>`;
+      })
+      .join('');
+  }
+
+  function opponent(i, pos) {
+    const n = state.hands[i].length;
+    const pts = `${state.points[i] > 0 ? '+' : ''}${state.points[i]}`;
+    return `<div class="fp-opponent fp-opponent-${pos}${state.active[i] ? '' : ' inactive'}">
+      <div class="fp-opponent-label"><b>${c().seats[i]}</b><span>${n} ${c().unknown} · ${pts}</span></div>
+      <div class="fp-backs" aria-label="${esc(c().unknown)} ${n}">${Array.from({ length: Math.min(n, 11) }, () => '<i aria-hidden="true"></i>').join('')}</div>
+    </div>`;
+  }
+
+  function river(i, pos, focus, animate) {
+    const pile = state.discards[i];
+    const isCurrent = state.phase === 'claim' && !state.pending?.robKong && state.pending?.discarder === i;
+    const landed = animate && focus?.type === 'discard' && focus.seat === i;
+    return `<div class="fp-river fp-river-${pos}" aria-label="${esc(c().seats[i] + ' · ' + c().discards + ' · ' + c().melds)}">
+      <div class="fp-river-label">${c().seats[i]} <small>${pile.length} ${c().discards}</small></div>
+      ${state.mode === 'mcr' && state.flowers[i].length ? `<div class="fp-flower-zone"><span>${c().mcrFlower}</span>${state.flowers[i].map(tile).join('')}</div>` : ''}
+      ${state.melds[i].length ? `<div class="fp-zone-melds"><span>${c().melds}</span>${exposed(i, focus, animate)}</div>` : ''}
+      <div class="fp-river-tiles">${pile.map((t, j) => `<span class="fp-river-tile${isCurrent && j === pile.length - 1 ? ' current' : ''}${landed && j === pile.length - 1 ? ' landed' : ''}">${tile(t)}</span>`).join('') || '<span class="fp-river-empty">·</span>'}</div>
+    </div>`;
+  }
+
+  function tableCenter(focus, animate) {
+    return `<div class="fp-table-center">
+      <div class="fp-wall-mark">
+        <span class="fp-wall-backs"><i></i><i></i><i></i></span>
+        <b>${state.wall.length}</b>
+        <small>${c().wall}</small>
+      </div>
+      ${focus ? `<div class="fp-table-last${state.phase === 'claim' ? ' active' : ''}${focus.type === 'draw' || focus.type === 'replacement' ? ' draw-event' : ''}${animate ? ' moving' : ''}" role="status" aria-live="polite"><small>${esc(focusLabel(focus))}</small>${focus.tile ? tile(focus.tile) : ''}<b>${focus.tile ? esc(tileName(focus.tile)) : ''}</b></div>` : ''}
+    </div>`;
+  }
+
+  function board(focus, animate) {
+    return `<div class="fp-table" aria-label="${esc(c().title)}">
+      ${opponent(2, 'top')}${opponent(3, 'left')}${opponent(1, 'right')}
+      <div class="fp-play-area">
+        ${river(2, 'top', focus, animate)}
+        ${river(3, 'left', focus, animate)}
+        ${tableCenter(focus, animate)}
+        ${river(1, 'right', focus, animate)}
+        ${river(0, 'bottom', focus, animate)}
+      </div>
+    </div>`;
+  }
+
+  function rack(focus, animate) {
+    const a = E.available(state);
+    const canChoose = ['turn', 'exchange', 'charleston'].includes(a?.phase);
+    const canDiscard = a?.phase === 'turn' ? a.discards : [];
+    const drawn = focus?.seat === 0 && ['draw', 'replacement'].includes(focus.type)
+      ? state.hands[0].lastIndexOf(focus.tile)
+      : -1;
+    const handButton = (t, i, isDraw) =>
+      `<button class="fp-tile${selected.includes(i) ? ' selected' : ''}${isDraw ? ' new-draw' : ''}${isDraw && animate ? ' moving' : ''}" data-full-select="${i}" aria-pressed="${selected.includes(i)}" aria-label="${esc(tileName(t))}" ${!canChoose || (a.phase === 'turn' && !canDiscard.includes(i)) ? 'disabled' : ''}>${tile(t)}${isDraw ? `<small class="fp-new-label">${c().newTile}</small>` : ''}</button>`;
+    const regular = state.hands[0].map((t, i) => (i === drawn ? '' : handButton(t, i, false))).join('');
+    const newTile = drawn >= 0 ? `<span class="fp-draw-slot">${handButton(state.hands[0][drawn], drawn, true)}</span>` : '';
+    const pts = `${state.points[0] > 0 ? '+' : ''}${state.points[0]}`;
+    return `<section class="fp-own-seat">
+      <div class="fp-own-label"><b>${c().seats[0]}</b><span>${pts} · ${c().hand} ${state.hands[0].length}</span></div>
+      <div class="fp-rack">${regular}${newTile}</div>
+    </section>`;
+  }
+
+  function actions() {
+    const a = E.available(state);
+    if (!a || a.phase === 'ended') return '';
+    let buttons = '';
+    let lead = '';
+    if (a.phase === 'exchange' || a.phase === 'charleston') {
+      lead = c().phaseNotice;
+      buttons = `<button class="btn" data-full-send ${selected.length !== 3 ? 'disabled' : ''}>${a.phase === 'exchange' ? c().exchange3 : c().pass3}</button>`;
+    }
+    if (a.phase === 'missing') {
+      lead = c().missing;
+      buttons = a.suits.map(x => `<button class="btn alt" data-full-missing="${x}">${c().suits[x]}</button>`).join('');
+    }
+    if (a.phase === 'turn') {
+      lead = c().selectToDiscard;
+      buttons = `<button class="btn" data-full-discard ${selected.length !== 1 ? 'disabled' : ''}>${c().submit}${selected.length === 1 ? ' · ' + esc(tileName(state.hands[0][selected[0]])) : ''}</button>`
+        + (a.canWin ? `<button class="btn fp-win-button" data-full-win>${c().win} · ${a.win.fan ?? a.win.base ?? a.win.value ?? a.win.totalFan}</button>` : '')
+        + (a.reviewWin ? `<button class="btn alt" data-full-mcr-review>${c().mcrReview}</button>` : '')
+        + a.kongs.map((k, i) => `<button class="btn alt" data-full-kong="${i}">${k.kind === 'added' ? c().addedKong : c().concealedKong} ${esc(tileName(k.tile))}</button>`).join('')
+        + a.exchanges.map((x, i) => `<button class="btn alt" data-full-joker="${i}">Joker ↔ ${esc(tileName(x.tile))}</button>`).join('');
+    }
+    if (a.phase === 'claim') {
+      lead = `${c().seats[a.from]} ${a.robKong ? c().addedKong : c().justDiscarded} ${tile(a.discard)} <strong>${esc(tileName(a.discard))}</strong>`;
+      buttons = a.actions.map(x => {
+        const label = x.kind === 'pass' ? c().continue
+          : x.kind === 'win' ? c().win
+            : x.kind === 'review' ? c().mcrReview
+              : x.kind === 'chow' ? c().chow
+                : x.kind === 'pung' ? c().pung
+                  : c().kong;
+        return `<button class="btn ${x.kind === 'pass' ? 'fp-continue' : 'fp-call'}" data-full-claim="${esc(x.id)}">${label}${x.used.length ? ' · ' + x.used.map(tileName).join(' ') : ''}</button>`;
+      }).join('');
+    }
+    return `<section class="fp-decision-bar${a.phase === 'claim' ? ' is-claim' : ''}" aria-label="${esc(a.phase === 'claim' ? c().claim : c().choose)}">
+      <div class="fp-decision-lead">${lead}</div>
+      <div class="fp-actions">${buttons}</div>
+    </section>`;
+  }
+
+  function guidance() {
+    if (!showHint && !showAdvice) return '';
+    const h = showHint ? A.hint(state) : null;
+    const ad = showAdvice ? A.advice(state) : null;
+    return `<aside class="fp-guide-panel">
+      <button class="fp-guide-close" data-full-close-guide aria-label="${esc(c().close)}">×</button>
+      ${showHint ? `<h2>${c().hint}</h2><p>${esc(h?.[lang] || '')}</p>` : ''}
+      ${showAdvice && ad ? `<div class="fp-advice"><h2>${c().advice}</h2><b>${tile(ad.tile)} ${esc(tileName(ad.tile))}</b><p>${esc(ad.reason[lang])}</p>${ad.keep.length ? `<small>${c().keep}: ${ad.keep.map(group => group.map(tileName).join(' + ')).join(' / ')}</small>` : ''}${ad.waitNote ? `<small>${esc(ad.waitNote[lang])}</small>` : ''}<small>${c().visible}</small></div>` : ''}
+    </aside>`;
+  }
+
+  function winDetails(w) {
+    const j = w.judged || {};
+    if (state.mode === 'am') return esc(j.lineTitle?.[lang] || j.lineId || '');
+    if (state.mode === 'mcr') {
+      return esc((j.breakdown || []).map(x => `${x.name?.[lang] || x.no} ${x.fan}`).join(' · ') + (j.coverage === 'self-reviewed' ? ' · ' + c().mcrReview : ''));
+    }
+    if (state.mode === 'sc') return esc(`${j.base || ''}${j.roots ? ` · ${j.roots} ${c().roots}` : ''}`);
+    const names = {
+      allSequences: ['平胡', '平胡', 'All sequences'],
+      allTriplets: ['对对胡', '對對胡', 'All triplets'],
+      allHonors: ['字一色', '字一色', 'All honors'],
+      fullFlush: ['清一色', '清一色', 'Full flush'],
+      halfFlush: ['混一色', '混一色', 'Half flush'],
+      dragon: ['三元牌', '三元牌', 'Dragon'],
+      seatWind: ['门风', '門風', 'Seat wind'],
+      roundWind: ['圈风', '圈風', 'Round wind'],
+      concealed: ['门清', '門清', 'Concealed'],
+      selfDraw: ['自摸', '自摸', 'Self draw'],
+      orphans: ['十三幺', '十三么', 'Thirteen orphans']
+    };
+    const k = lang === 'zh' ? 0 : lang === 'tw' ? 1 : 2;
+    return esc((j.breakdown || []).map(x => `${names[x.id]?.[k] || x.id} ${x.fan}`).join(' · '));
+  }
+
+  function result() {
+    if (state.phase !== 'ended' || !showResult) return '';
+    const r = state.result || {};
+    const title = r.type === 'draw' ? c().draw
+      : r.type === 'three-wins' ? c().threeWins
+        : r.type === 'safety-stop' ? c().safety
+          : c().winResult;
+    return `<section class="pg-result">
+      <button class="fp-result-close" data-full-result-close aria-label="${esc(c().close)}">×</button>
+      <h2>${title}</h2>
+      ${state.winners.map(w => {
+        const scoreLabel = w.judged?.totalFan !== undefined
+          ? w.judged.totalFan + (lang === 'en' ? ' points' : ' 分')
+          : w.judged?.fan !== undefined
+            ? w.judged.fan + ' 番'
+            : w.judged?.base !== undefined
+              ? String(w.judged.base)
+              : (w.judged?.value ?? '');
+        return `<p>${c().seats[w.seat]} · ${w.source === 'selfDraw' ? c().selfDraw : c().discardWin} · ${scoreLabel}<br><small>${winDetails(w)}</small></p>`;
+      }).join('')}
+      <div class="fp-score">${state.points.map((p, i) => `<span>${c().seats[i]} <b>${p > 0 ? '+' : ''}${p}</b></span>`).join('')}</div>
+      <div class="fp-actions">
+        <button class="btn" data-full-restart>${c().restart}</button>
+        <button class="btn alt" data-full-new>${c().new}</button>
+      </div>
+    </section>`;
+  }
+
+  function eventName(type) {
+    const names = {
+      deal: ['发牌', '發牌', 'Deal'],
+      draw: ['摸牌', '摸牌', 'Draw'],
+      replacement: ['补牌', '補牌', 'Replacement draw'],
+      'exchange-three': ['换三张', '換三張', 'Exchange three'],
+      charleston: ['传牌', '傳牌', 'Charleston'],
+      missing: ['定缺', '定缺', 'Missing suit'],
+      discard: ['出牌', '出牌', 'Discard'],
+      claim: ['吃碰杠', '吃碰槓', 'Claim'],
+      'kong-payment': ['杠分', '槓分', 'Kong payment'],
+      pass: ['过牌', '過牌', 'Pass'],
+      win: ['胡牌', '胡牌', 'Win'],
+      'round-draw': ['流局', '流局', 'Drawn hand'],
+      kong: ['杠牌', '槓牌', 'Kong'],
+      'joker-exchange': ['换 Joker', '換 Joker', 'Joker exchange'],
+      'kong-attempt': ['加杠待响应', '加槓待回應', 'Added kong offered for robbing'],
+      flower: ['补花', '補花', 'Flower replacement']
+    };
+    return names[type]?.[lang === 'zh' ? 0 : lang === 'tw' ? 1 : 2] || type;
+  }
+
+  function history() {
+    return `<details class="fp-history-menu">
+      <summary>${c().replay} · ${state.history.length}</summary>
+      <ol>${state.history.slice(-40).reverse().map(h => `<li>${h.seat === null ? '' : c().seats[h.seat] + ' · '}${esc(eventName(h.type))}${h.tile && !(h.seat !== 0 && ['draw', 'replacement'].includes(h.type)) ? ' · ' + esc(tileName(h.tile)) : ''}</li>`).join('')}</ol>
+    </details>`;
+  }
+
+  function mcrReviewPanel() {
+    if (!showMcrReview || state?.mode !== 'mcr') return '';
+    const total = manualFans.reduce((n, no) => n + (MCRF.byNo(no)?.points || 0), 0);
+    const assessed = E.available(state)?.assessment;
+    const unit = lang === 'en' ? 'points' : '分';
+    let h = `<section class="pg-result fp-mcr-review" role="dialog" aria-modal="true">
+      <button class="fp-result-close" data-full-mcr-cancel aria-label="${esc(c().mcrCancel)}">×</button>
+      <h2>${c().mcrReview}</h2>
+      <p>${c().mcrExplain}</p>
+      ${assessed?.breakdown?.length ? `<p class="fp-mcr-auto">${c().mcrAuto}: ${assessed.baseFan} ${unit} · ${assessed.breakdown.map(x => esc(x.name?.[lang] || x.no)).join('、')}</p>` : ''}
+      <p><strong>${c().mcrSelected}: ${total} ${unit}</strong> · ${c().mcrFlower}: ${state.flowers[0].length}</p>
+      <div class="fp-mcr-fans">`;
+    for (const group of MCRF.groupByPoints()) {
+      if (group.points === 1 && group.fans.every(f => f.no === 81)) continue;
+      h += `<details><summary>${group.points} ${unit}</summary><div>`;
+      for (const f of group.fans) {
+        if (f.no !== 81) {
+          h += `<button class="fp-mcr-fan${manualFans.includes(f.no) ? ' selected' : ''}" data-full-mcr-fan="${f.no}" aria-pressed="${manualFans.includes(f.no)}">${esc(f.name[lang])} · ${f.points}</button>`;
+        }
+      }
+      h += '</div></details>';
+    }
+    return h + `</div><div class="fp-actions"><button class="btn" data-full-mcr-confirm ${total < 8 ? 'disabled' : ''}>${c().mcrConfirm}</button><button class="btn alt" data-full-mcr-cancel>${c().mcrCancel}</button></div></section>`;
+  }
+
+  function game() {
+    const focus = latestVisibleEvent();
+    const animate = !!motion && motion === focus;
+    const canAdvice = state.phase === 'turn' && state.turn === 0 && E.available(state)?.discards?.length > 0;
+    motion = null;
+    const scopeText = c().scope + (state.mode === 'am' ? ' ' + c().amScope + ' ' + c().flower : state.mode === 'mcr' ? ' ' + c().mcrScope : '');
+    return `<div class="fp-game fp-page">
+      <div class="fp-game-head">
+        <button class="fp-game-back" data-full-back>${c().back}</button>
+        <div class="fp-game-title"><strong>${c().modes[state.mode]} · ${c().liveTable}</strong><small>${c().seed} ${state.seed}</small></div>
+        <div class="fp-game-tools">
+          <button data-full-hint aria-pressed="${showHint}">${c().hint}</button>
+          ${canAdvice ? `<button data-full-advice aria-pressed="${showAdvice}">${c().advice}</button>` : ''}
+          ${state.phase === 'ended' && !showResult ? `<button data-full-result-open>${c().resultLabel}</button>` : ''}
+          ${history()}
+          <details class="fp-scope-menu"><summary>${c().scopeLabel}</summary><p>${scopeText}</p></details>
+          <button data-full-restart>${c().restart}</button>
+          <button data-full-new>${c().new}</button>
+        </div>
+      </div>
+      <div class="fp-table-frame">${board(focus, animate)}${actions()}${rack(focus, animate)}</div>
+      ${feedback ? `<div class="fp-game-toast" role="status">${c().error}</div>` : ''}
+      ${guidance()}
+      ${mcrReviewPanel()}
+      ${result()}
+    </div>`;
+  }
+
+  function apply(action) {
+    const before = state.history.length;
+    const r = E.act(state, action);
+    if (r.accepted) {
+      state = r.state;
+      selected = [];
+      feedback = '';
+      showAdvice = false;
+      showMcrReview = false;
+      manualFans = [];
+      if (state.phase === 'ended') {
+        showResult = true;
+        showHint = false;
+      }
+      const recent = state.history.slice(before).reverse();
+      motion = recent.find(
+        e => ['discard', 'claim', 'kong', 'kong-attempt', 'joker-exchange', 'win', 'flower'].includes(e.type) ||
+          (['draw', 'replacement'].includes(e.type) && e.seat === 0)
+      ) || null;
+    } else {
+      feedback = r.reason;
+    }
+  }
+
+  function dispatch(el) {
+    const d = el.dataset || {};
+    if (d.fullBack !== undefined) return 'back';
+    if (d.fullShort !== undefined) return 'short';
+    if (d.fullMode !== undefined) { mode = d.fullMode; state = null; return 'view'; }
+    if (d.fullOption !== undefined) { options[d.fullOption] = !options[d.fullOption]; return 'local'; }
+    if (d.fullStart !== undefined || d.fullNew !== undefined) {
+      mode = state?.mode || mode;
+      state = E.start(mode, Math.floor(Math.random() * 4294967295), options);
+      selected = [];
+      motion = state?.history.at(-1) || null;
+      feedback = '';
+      showHint = false;
+      showAdvice = false;
+      showResult = true;
+      return 'view';
+    }
+    if (d.fullMcrReview !== undefined) {
+      showMcrReview = true;
+      manualFans = [...new Set((E.available(state)?.assessment?.breakdown || []).map(x => x.no).filter(no => no < 81))];
+      return 'local';
+    }
+    if (d.fullMcrCancel !== undefined) { showMcrReview = false; manualFans = []; return 'local'; }
+    if (d.fullMcrFan !== undefined) {
+      const no = Number(d.fullMcrFan);
+      if (MCRF?.byNo(no) && no < 81) {
+        manualFans = manualFans.includes(no) ? manualFans.filter(x => x !== no) : manualFans.concat(no);
+      }
+      return 'local';
+    }
+    if (d.fullMcrConfirm !== undefined) { apply({ type: 'manual-win', fanNos: manualFans.slice() }); return 'local'; }
+    if (d.fullRestart !== undefined) {
+      state = E.start(state.mode, state.seed, state.options);
+      selected = [];
+      motion = state?.history.at(-1) || null;
+      feedback = '';
+      showHint = false;
+      showAdvice = false;
+      showResult = true;
+      return 'view';
+    }
+    if (!state) return 'local';
+    if (d.fullSelect !== undefined) {
+      const i = Number(d.fullSelect);
+      const a = E.available(state);
+      const max = ['exchange', 'charleston'].includes(a?.phase) ? 3 : 1;
+      selected = selected.includes(i) ? selected.filter(x => x !== i) : selected.length < max ? selected.concat(i) : [i];
+      feedback = '';
+      return 'local';
+    }
+    if (d.fullHint !== undefined) { showHint = !showHint; return 'local'; }
+    if (d.fullAdvice !== undefined) { showAdvice = !showAdvice; return 'local'; }
+    if (d.fullCloseGuide !== undefined) { showHint = false; showAdvice = false; return 'local'; }
+    if (d.fullResultClose !== undefined) { showResult = false; return 'local'; }
+    if (d.fullResultOpen !== undefined) { showResult = true; return 'local'; }
+    if (d.fullSend !== undefined) {
+      apply({ type: state.phase === 'exchange' ? 'exchange' : 'charleston', indices: selected.slice().sort((a, b) => a - b) });
+    }
+    if (d.fullMissing !== undefined) apply({ type: 'missing', suit: d.fullMissing });
+    if (d.fullDiscard !== undefined) apply({ type: 'discard', index: selected[0] });
+    if (d.fullWin !== undefined) apply({ type: 'win' });
+    if (d.fullClaim !== undefined) {
+      if (d.fullClaim === 'review') {
+        showMcrReview = true;
+        manualFans = [...new Set((E.available(state)?.assessment?.breakdown || []).map(x => x.no).filter(no => no < 81))];
+        return 'local';
+      }
+      apply({ type: 'claim', id: d.fullClaim });
+    }
+    if (d.fullKong !== undefined) {
+      const k = E.available(state).kongs[Number(d.fullKong)];
+      if (k) apply({ type: 'kong', ...k });
+    }
+    if (d.fullJoker !== undefined) {
+      const x = E.available(state).exchanges[Number(d.fullJoker)];
+      if (x) apply({ type: 'joker-exchange', ...x });
+    }
     return 'local';
   }
-  g.MahjongFullPlayUI={enter(next){if(['hk','sc','am','mcr'].includes(next))mode=next;state=null;selected=[];motion=null;showResult=true;showMcrReview=false;manualFans=[];},setLang(v){if(L[v])lang=v;},html(){return state?game():setup();},dispatch,getState(){return state;}};
-})(typeof globalThis!=='undefined'?globalThis:window);
+
+  g.MahjongFullPlayUI = {
+    enter(next) {
+      if (['hk', 'sc', 'am', 'mcr'].includes(next)) mode = next;
+      state = null;
+      selected = [];
+      motion = null;
+      showResult = true;
+      showMcrReview = false;
+      manualFans = [];
+    },
+    setLang(v) { if (L[v]) lang = v; },
+    html() { return state ? game() : setup(); },
+    dispatch,
+    getState() { return state; }
+  };
+})(typeof globalThis !== 'undefined' ? globalThis : window);

@@ -8,10 +8,11 @@
   const MCR=isNode?require('../course/mcr-score.js'):g.MahjongMCRScore;
   const L=(zh,tw,en)=>({zh,tw,en});
   const suitName={m:L('万','萬','craks'),p:L('筒','筒','dots'),s:L('条','索','bams')};
-  function tileName(t,lang){if(t==='j1')return 'Joker';if('mps'.includes(t[0]))return `${t[1]} ${suitName[t[0]][lang]}`;if(t[0]==='z')return (lang==='en'?['East','South','West','North','Red','Green','White']:lang==='tw'?['東','南','西','北','中','發','白']:['东','南','西','北','中','发','白'])[Number(t[1])-1];return t;}
+  function tileName(t,lang){if(t==='j1')return 'Joker';if('mps'.includes(t[0]))return `${t[1]} ${suitName[t[0]][lang]}`;if(t[0]==='z')return (lang==='en'?['East','South','West','North','Red','Green','White']:lang==='tw'?['東','南','西','北','中','發','白']:['东','南','西','北','中','发','白'])[Number(t[1])-1];if(t[0]==='f')return (lang==='en'?['Spring','Summer','Autumn','Winter','Plum','Orchid','Chrysanthemum','Bamboo']:lang==='tw'?['春','夏','秋','冬','梅','蘭','菊','竹']:['春','夏','秋','冬','梅','兰','菊','竹'])[Number(t[1])-1]||t;return t;}
   const cts=h=>{const c={};for(const t of h)c[t]=(c[t]||0)+1;return c;};
+  const totalCopies=t=>t[0]==='f'?1:t==='j1'?8:4;
   function visible(s){return s.hands[0].concat(s.melds.flatMap(ms=>ms.flatMap(m=>m.tiles)),s.discards.flat(),s.flowers?.flat()||[]);}
-  function remaining(s,tile){return Math.max(0,(tile[0]==='f'?1:tile==='j1'?8:4)-(cts(visible(s))[tile]||0));}
+  function remaining(s,tile){return Math.max(0,totalCopies(tile)-(cts(visible(s))[tile]||0));}
   function value(hand,t){
     const c=cts(hand),n=Number(t[1]);let v=(c[t]||0)*3;
     if('mps'.includes(t[0]))for(const d of [-2,-1,1,2]){const x=n+d;if(x>=1&&x<=9)v+=(c[t[0]+x]||0)*(Math.abs(d)===1?2:1);}
@@ -38,17 +39,19 @@
     if(!s||s.phase!=='turn'||s.turn!==0)return null;
     const a=Engine.available(s);if(!a?.discards?.length)return null;
     const hand=s.hands[0],scMissing=s.mode==='sc'&&hand.some(x=>x[0]===s.missingSuit[0]);
+    const visCounts=cts(visible(s)),handCounts=cts(hand);
+    const remOf=tile=>Math.max(0,totalCopies(tile)-(visCounts[tile]||0));
+    const choices=s.mode==='sc'?'mps'.split('').flatMap(k=>Array.from({length:9},(_,n)=>k+(n+1))):'mps'.split('').flatMap(k=>Array.from({length:9},(_,n)=>k+(n+1))).concat(Array.from({length:7},(_,n)=>'z'+(n+1)));
     const candidates=a.discards.map(i=>{
       const t=hand[i],rest=hand.slice(0,i).concat(hand.slice(i+1));
       let wait=0;
       if(s.mode==='hk'||s.mode==='sc'||s.mode==='mcr'){
-        const choices=s.mode==='sc'?'mps'.split('').flatMap(k=>Array.from({length:9},(_,n)=>k+(n+1))):'mps'.split('').flatMap(k=>Array.from({length:9},(_,n)=>k+(n+1))).concat(Array.from({length:7},(_,n)=>'z'+(n+1)));
-        for(const x of choices){if(remaining(s,x)<=0)continue;
+        for(const x of choices){const rem=remOf(x);if(rem<=0)continue;
           const ok=s.mode==='hk'?HK.isWinning(rest.concat(x),s.melds[0]):s.mode==='mcr'?MCR.shape(rest.concat(x),s.melds[0]):SC.isWinning(rest.concat(x),s.melds[0],s.missingSuit[0]);
-          if(ok)wait+=remaining(s,x);
+          if(ok)wait+=rem;
         }
       }
-      const isolation=value(rest,t),publicSeen=4-remaining(s,t)-(cts(hand)[t]||0);
+      const isolation=value(rest,t),publicSeen=totalCopies(t)-remOf(t)-(handCounts[t]||0);
       const score=wait*100-isolation*3+Math.max(0,publicSeen)*.5+(scMissing&&t[0]===s.missingSuit[0]?1000:0);
       return {i,t,rest,wait,score,seen:Math.max(0,publicSeen)};
     }).sort((a,b)=>b.score-a.score||a.i-b.i);

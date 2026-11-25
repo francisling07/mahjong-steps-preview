@@ -5,6 +5,7 @@
   const isNode=typeof module!=='undefined'&&module.exports;
   const Deck=isNode?require('./deck.js'):g.MahjongPlaygroundDeck;
   const Judges=isNode?require('./judges.js'):g.MahjongPlaygroundJudges;
+  const BotAI=isNode?require('./bot-ai.js'):g.MahjongBotAI;
   const HK=isNode?require('../course/hk-rules.js'):g.HKLearningRules;
   const SC=isNode?require('../course/sichuan-rules.js'):g.SichuanLearningRules;
   const SCScore=isNode?require('../course/sichuan-score.js'):g.SichuanLearningScore;
@@ -61,25 +62,11 @@
     }
     return s;
   }
-  function botMissing(hand){const c={m:0,p:0,s:0};for(const x of hand)c[x[0]]++;return ['m','p','s'].sort((a,b)=>c[a]-c[b]||a.localeCompare(b))[0];}
-  function botExchange(hand){for(const suit of ['m','p','s'].sort((a,b)=>hand.filter(x=>x[0]===a).length-hand.filter(x=>x[0]===b).length)){
-    const indices=hand.map((x,i)=>x[0]===suit?i:-1).filter(i=>i>=0);if(indices.length>=3)return indices.slice(0,3);
-  }return null;}
-  function support(hand,tile){
-    const c=counts(hand),n=Number(tile[1]),suit=tile[0];let score=(c[tile]-1)*4;
-    if('mps'.includes(suit))for(const d of [-2,-1,1,2]){const x=n+d;if(x>=1&&x<=9)score+=(c[suit+x]||0)*(Math.abs(d)===1?1.8:.7);}
-    if(tile==='j1')score+=8;
-    return score;
-  }
-  function botPass(hand){
-    const ranked=hand.map((t,i)=>({t,i,v:support(hand,t)})).filter(x=>x.t!=='j1').sort((a,b)=>a.v-b.v||order(b.t)-order(a.t)||a.i-b.i);
-    return ranked.slice(0,3).map(x=>x.i).sort((a,b)=>a-b);
-  }
   function uniqueIndices(indices,hand,number){return Array.isArray(indices)&&indices.length===number&&new Set(indices).size===number&&indices.every(i=>Number.isInteger(i)&&i>=0&&i<hand.length);}
   function takeIndices(hand,indices){const selected=indices.map(i=>hand[i]);for(const i of indices.slice().sort((a,b)=>b-a))hand.splice(i,1);return selected;}
   function exchangeThree(s,indices){
     if(!uniqueIndices(indices,s.hands[0],3)||new Set(indices.map(i=>s.hands[0][i][0])).size!==1)return false;
-    const selections=[indices,...[1,2,3].map(i=>botExchange(s.hands[i]))];
+    const selections=[indices,...[1,2,3].map(i=>BotAI.chooseExchange(s.hands[i]))];
     if(selections.some(x=>!x))return false;
     const outgoing=selections.map((sel,i)=>takeIndices(s.hands[i],sel));
     for(let i=0;i<4;i++){s.hands[(i+1)%4].push(...outgoing[i]);sortHand(s.hands[(i+1)%4]);}
@@ -89,7 +76,7 @@
   function charleston(s,indices){
     if(!uniqueIndices(indices,s.hands[0],3)||indices.some(i=>s.hands[0][i]==='j1'))return false;
     const outgoing=[takeIndices(s.hands[0],indices)];
-    for(let i=1;i<4;i++)outgoing.push(takeIndices(s.hands[i],botPass(s.hands[i])));
+    for(let i=1;i<4;i++)outgoing.push(takeIndices(s.hands[i],BotAI.chooseCharlestonPass(s.hands[i])));
     const direction=charlestonDirection(s.charlestonStep);
     for(let i=0;i<4;i++){s.hands[(i+direction)%4].push(...outgoing[i]);sortHand(s.hands[(i+direction)%4]);}
     log(s,'charleston',0,{step:s.charlestonStep,direction,tiles:outgoing[0]});s.charlestonStep++;
@@ -129,7 +116,7 @@
   function getWinnerOptions(s,discarder,tile){
     const winners=[];for(let seat=0;seat<4;seat++)if(seat!==discarder&&s.active[seat]){
       const judged=Judges.judge(s.mode,s,seat,'discard',tile);if(judged?.legal)winners.push({seat,judged});
-    }return s.mode==='mcr'?winners.sort((a,b)=>(a.seat-discarder+4)%4-(b.seat-discarder+4)%4):winners;
+    }return winners.sort((a,b)=>(a.seat-discarder+4)%4-(b.seat-discarder+4)%4);
   }
   function payment(s,winner,source,discarder,judged){
     const other=Array.from({length:4},(_,i)=>i).filter(i=>i!==winner&&s.active[i]);
@@ -205,22 +192,11 @@
     draw(s,p.discarder,true);return true;
   }
   function botClaim(s,discarder,tile){
-    if(s.mode==='mcr'){
-      const calls=[];for(let gap=1;gap<4;gap++){const seat=(discarder+gap)%4;if(seat===0)continue;
-        for(const option of claimChoices(s,seat,discarder,tile))calls.push({seat,gap,option});}
-      calls.sort((a,b)=>(a.option.kind==='chow'?1:0)-(b.option.kind==='chow'?1:0)||a.gap-b.gap||(a.option.kind==='kong'?0:1)-(b.option.kind==='kong'?0:1));
-      if(calls.length){s.pending={discarder,tile};applyClaim(s,calls[0].seat,calls[0].option);return true;}
-      return false;
-    }
-    for(let gap=1;gap<4;gap++){
-      const seat=(discarder+gap)%4;if(seat===0||!s.active[seat])continue;
-      const options=claimChoices(s,seat,discarder,tile);
-      const chow=options.find(x=>x.kind==='chow');
-      const hkFlush=s.mode==='hk'&&new Set(s.hands[seat].concat(s.melds[seat].flatMap(m=>m.tiles),tile).filter(t=>'mps'.includes(t[0])).map(t=>t[0])).size===1;
-      const chosen=options.find(x=>x.kind==='pung')||(s.mode==='hk'&&!hkFlush?null:chow);
-      if(chosen){s.pending={discarder,tile};applyClaim(s,seat,chosen);return true;}
-    }
-    return false;
+    const pick=BotAI.chooseClaim(s,discarder,tile,claimChoices);
+    if(!pick)return false;
+    s.pending={discarder,tile};
+    applyClaim(s,pick.seat,pick.option);
+    return true;
   }
   function resolveAfterPass(s){
     const p=s.pending;if(!p)return;
@@ -251,11 +227,7 @@
     log(s,'discard',seat,{tile});resolveDiscard(s,seat,tile);return true;
   }
   function botDiscardIndex(s,seat){
-    const legal=legalDiscards(s,seat);if(!legal.length)return -1;
-    let best=legal[0],value=Infinity;
-    for(const i of legal){const t=s.hands[seat][i],v=support(s.hands[seat],t)+((s.mode==='am'&&t==='j1')?100:0);
-      if(v<value||(v===value&&order(t)>order(s.hands[seat][best]))){best=i;value=v;}}
-    return best;
+    return BotAI.chooseDiscard(s,seat,legalDiscards(s,seat));
   }
   function runAuto(s){
     let guard=0;
@@ -267,17 +239,18 @@
       if(s.needDraw){if(!draw(s,seat,false))return s;s.needDraw=false;}
       const judged=s.turnSource!=='draw'?null:Judges.judge(s.mode,s,seat,'selfDraw');
       if(judged?.legal){applyWin(s,seat,'selfDraw',null,null,judged);if(s.phase==='ended')return s;nextTurn(s,seat);continue;}
-      if(s.mode==='mcr'&&s.wall.length){
-        const added=s.melds[seat].map((m,i)=>({m,i})).find(x=>x.m.type==='pung'&&s.hands[seat].includes(x.m.tiles[0]));
-        if(added){const tile=added.m.tiles[0];s.pending={discarder:seat,tile,robKong:true,meldIndex:added.i};s.lastDiscardMethod='rob-kong';
-          log(s,'kong-attempt',seat,{tile});const canReview=MCR.shape(s.hands[0].concat(tile),s.melds[0]);
-          if(canReview){s.phase='claim';return s;}
-          resolveAfterPass(s);if(s.phase==='ended')return s;continue;
-        }
-        const c=counts(s.hands[seat]),four=Object.keys(c).find(t=>c[t]===4);
-        if(four&&s.melds[seat].length<4){for(let n=0;n<4;n++)s.hands[seat].splice(s.hands[seat].indexOf(four),1);
-          s.melds[seat].push({type:'kong',tiles:Array(4).fill(four),baseTile:four,from:seat,concealed:true});
-          log(s,'kong',seat,{kind:'concealed',tile:four});draw(s,seat,true);if(s.phase==='ended')return s;continue;}
+      const selfKong=BotAI.chooseSelfKong(s,seat);
+      if(selfKong&&selfKong.kind==='added'){
+        const tile=selfKong.tile;s.pending={discarder:seat,tile,robKong:true,meldIndex:selfKong.meldIndex};s.lastDiscardMethod='rob-kong';
+        log(s,'kong-attempt',seat,{tile});const canReview=s.mode==='mcr'&&MCR.shape(s.hands[0].concat(tile),s.melds[0]);
+        if(canReview){s.phase='claim';return s;}
+        resolveAfterPass(s);if(s.phase==='ended')return s;continue;
+      }
+      if(selfKong&&selfKong.kind==='concealed'){
+        const four=selfKong.tile;
+        for(let n=0;n<4;n++)s.hands[seat].splice(s.hands[seat].indexOf(four),1);
+        s.melds[seat].push({type:'kong',tiles:Array(4).fill(four),baseTile:four,from:seat,concealed:true});
+        log(s,'kong',seat,{kind:'concealed',tile:four});draw(s,seat,true);if(s.phase==='ended')return s;continue;
       }
       const idx=botDiscardIndex(s,seat);if(idx<0){endDraw(s);return s;}
       discard(s,seat,idx);
@@ -296,14 +269,16 @@
       const p=s.pending;if(!p)return null;
       const result=[{id:'pass',kind:'pass',used:[]}];
       const win=Judges.judge(s.mode,s,0,'discard',p.tile);
-      const botWinner=s.mode==='mcr'?getWinnerOptions(s,p.discarder,p.tile).find(x=>x.seat!==0):null;
+      const botWinners=getWinnerOptions(s,p.discarder,p.tile).filter(x=>x.seat!==0);
+      const botWinner=s.mode==='sc'?null:botWinners[0]||null;
       const myDistance=(4-p.discarder)%4;
       const canOutrankBot=!botWinner||myDistance<(botWinner.seat-p.discarder+4)%4;
       if(win?.legal&&canOutrankBot)result.push({id:'win',kind:'win',used:[]});
       if(s.mode==='mcr'&&win?.shapeValid&&canOutrankBot)result.push({id:'review',kind:'review',used:[]});
-      if(!getWinnerOptions(s,p.discarder,p.tile).some(x=>x.seat!==0)){
-        const mine=claimChoices(s,0,p.discarder,p.tile),others=s.mode==='mcr'?[1,2,3].filter(i=>i!==p.discarder).flatMap(i=>claimChoices(s,i,p.discarder,p.tile).map(x=>({seat:i,kind:x.kind}))):[];
-        if(!p.robKong)result.push(...mine.filter(x=>s.mode!=='mcr'||!others.some(y=>y.kind!=='chow'&&(x.kind==='chow'||(x.kind==='pung'||x.kind==='kong')&&(y.seat-p.discarder+4)%4<(4-p.discarder)%4))));
+      if(!botWinners.length){
+        const mine=claimChoices(s,0,p.discarder,p.tile);
+        const others=[1,2,3].filter(i=>i!==p.discarder&&s.active[i]).flatMap(i=>claimChoices(s,i,p.discarder,p.tile).map(x=>({seat:i,kind:x.kind})));
+        if(!p.robKong)result.push(...mine.filter(x=>!others.some(y=>y.kind!=='chow'&&(x.kind==='chow'||(x.kind==='pung'||x.kind==='kong')&&(y.seat-p.discarder+4)%4<myDistance))));
       }
       return {phase:'claim',discard:p.tile,from:p.discarder,robKong:!!p.robKong,assessment:s.mode==='mcr'?win:null,actions:result};
     }
@@ -330,7 +305,7 @@
     }
     if(s.phase==='missing'){
       if(action.type!=='missing'||!['m','p','s'].includes(action.suit))return bad('invalid-suit');
-      s.missingSuit[0]=action.suit;for(let i=1;i<4;i++)s.missingSuit[i]=botMissing(s.hands[i]);
+      s.missingSuit[0]=action.suit;for(let i=1;i<4;i++)s.missingSuit[i]=BotAI.chooseMissing(s.hands[i]);
       s.phase='turn';log(s,'missing',0,{suit:action.suit});return {state:s,accepted:true,reason:'ok'};
     }
     if(s.phase==='charleston'){

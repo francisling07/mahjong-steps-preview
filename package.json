@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "description": "Interactive Mahjong lessons and practice table",
+  "scripts": {
+    "test": "node qa/run-all.cjs"
+  },
   "devDependencies": {
     "playwright": "1.62.1"
   }
