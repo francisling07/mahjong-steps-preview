@@ -35,7 +35,8 @@ const suites = [
   'qa/phase1-regression-check.cjs',
   'qa/phase2-decoupling-check.cjs',
   'qa/phase3-ui-check.cjs',
-  'qa/fan-examples-check.cjs'
+  'qa/fan-examples-check.cjs',
+  'qa/seo-check.cjs'
 ];
 
 let passed = 0;

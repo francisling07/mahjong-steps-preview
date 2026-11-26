@@ -108,7 +108,13 @@
   const dataUriCache = Object.create(null);
   const decodedSet = Object.create(null);
   const retainedImages = [];
-  let preloadStarted = false;
+  let preloadScheduled = false;
+  let preloadRunning = false;
+  let preloadTimer = null;
+
+  // Homepage decorative tiles warm up first; flowers warm up last so mobile LCP stays fast.
+  const PRIORITY_IDS = ['s2', 's3', 's4', 'p3', 'p4', 'p8', 'm3', 'm6', 'm7', 'm8', 'm9', 'z1', 'z4', 'z6'];
+  const MAX_CONCURRENT_FETCHES = 6;
 
   function warmImage(id, src) {
     if (typeof Image === 'undefined') return;
@@ -124,29 +130,76 @@
     } catch (_) {}
   }
 
-  function preloadAll() {
-    if (preloadStarted) return;
-    preloadStarted = true;
+  function startPreloadQueue() {
+    if (preloadRunning) return;
+    preloadRunning = true;
     const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof Image !== 'undefined';
     if (!isBrowser) return;
 
     const canFetch = typeof fetch === 'function' && (typeof location === 'undefined' || location.protocol !== 'file:');
-    for (const id of ids) {
-      if (id === 'j1') continue;
-      const url = fileUrlFor(id);
-      if (canFetch) {
-        fetch(url)
-          .then(res => (res.ok ? res.text() : Promise.reject(new Error('HTTP ' + res.status))))
-          .then(svgText => {
-            if (!svgText || !svgText.includes('<svg')) return;
-            const uri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgText);
-            dataUriCache[id] = uri;
-            warmImage(id, uri);
-          })
-          .catch(() => warmImage(id, url));
-      } else {
-        warmImage(id, url);
+    const prioritySet = new Set(PRIORITY_IDS);
+    const orderedIds = [
+      ...PRIORITY_IDS,
+      ...ids.filter(id => id !== 'j1' && !prioritySet.has(id) && id[0] !== 'f'),
+      ...ids.filter(id => id[0] === 'f')
+    ];
+
+    if (!canFetch) {
+      orderedIds.forEach(id => warmImage(id, fileUrlFor(id)));
+      return;
+    }
+
+    let cursor = 0;
+    function pump() {
+      if (cursor >= orderedIds.length) return;
+      const id = orderedIds[cursor++];
+      if (dataUriCache[id] || decodedSet[id]) {
+        pump();
+        return;
       }
+      const url = fileUrlFor(id);
+      fetch(url)
+        .then(res => (res.ok ? res.text() : Promise.reject(new Error('HTTP ' + res.status))))
+        .then(svgText => {
+          if (!svgText || !svgText.includes('<svg')) return;
+          const uri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgText);
+          dataUriCache[id] = uri;
+          warmImage(id, uri);
+        })
+        .catch(() => warmImage(id, url))
+        .finally(pump);
+    }
+
+    for (let i = 0; i < MAX_CONCURRENT_FETCHES; i++) pump();
+  }
+
+  function preloadAll(eager) {
+    if (preloadRunning) return;
+    const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof Image !== 'undefined';
+    if (!isBrowser) return;
+
+    if (eager) {
+      if (preloadTimer && typeof clearTimeout === 'function') {
+        clearTimeout(preloadTimer);
+        preloadTimer = null;
+      }
+      startPreloadQueue();
+      return;
+    }
+
+    if (preloadScheduled) return;
+    preloadScheduled = true;
+
+    const kick = () => {
+      preloadTimer = null;
+      startPreloadQueue();
+    };
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(kick, { timeout: 1200 });
+    } else if (typeof setTimeout === 'function') {
+      preloadTimer = setTimeout(kick, 450);
+    } else {
+      kick();
     }
   }
 

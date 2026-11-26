@@ -225,6 +225,112 @@ if (!copy[lang]) lang = 'zh';
 langEl.value = lang;
 
 const t = () => copy[lang];
+
+const seoMeta = {
+  zh: {
+    brand: '雀步 Mahjong Steps',
+    homeTitle: '免费在线麻将网页版 - 免下载即开即玩 | 雀步 Mahjong Steps',
+    homeDesc: '免费在线麻将网页版，免下载、免注册即开即玩！雀步 Mahjong Steps 提供香港麻将、中国国标麻将（MCR）、四川血战到底与美式麻将四套牌桌实战与零基础互动课程，含 125 组番种牌型图解与实时听牌提示，支持简体中文、繁體中文与 English。',
+    routes: {
+      fullplay: { title: '在线麻将牌桌操练场（免费免下载）', desc: '免下载在线体验香港麻将、中国国标 MCR、四川血战到底与美式麻将实战牌桌，支持实时听牌预览与自动出牌节奏。' },
+      course: { title: '香港麻将零基础课程与 30 组番种速查', desc: '40 课香港麻将零基础互动课程、12 局教学对局与 30 组真实牌型番种积分速查。' },
+      mcr: { title: '中国国标麻将 MCR 课程与 81 番种图解', desc: '系统学习中国国标麻将 MCR 8 番起和规则，查阅全部 81 番种的完整真实牌型示例。' },
+      bridge: { title: '四川血战到底课程与番型速查', desc: '学习四川血战到底定缺、血战与换三张规则，附常见番型牌面示例与牌桌实战。' },
+      american: { title: '美式麻将教程、Charleston 换牌与 Joker 指南', desc: '互动掌握美式麻将牌型卡、Charleston 换牌流程、Joker 替代规则与经典示例牌型。' },
+      gallery: { title: '完整麻将牌图鉴（万筒条字花与 Joker）', desc: '高清查看全部 43 张麻将牌面：万子、筒子、条子、风牌、三元牌、花牌与 Joker。' },
+      playground: { title: '短局牌桌练习', desc: '快速体验数巡短局摸打与基础听牌决策练习。' },
+      rule: { title: '麻将规则入门概览', desc: '快速对比香港麻将、国标麻将、四川血战到底与美式麻将的核心规则与特色。' },
+      lesson: { title: '麻将基础互动练习', desc: '通过互动识牌、拼牌与出牌决策题快速建立麻将牌感。' }
+    },
+    overviewEyebrow: 'FREE ONLINE MAHJONG · PLAY & LEARN',
+    overviewTitle: '免费在线麻将网页版：免下载即开即玩，四套玩法一站练习',
+    overviewBody: '雀步（Mahjong Steps）是一款专为学习与实战打造的纯网页麻将练习场，无需下载 App 或注册账号，手机与电脑打开浏览器即可开局。支持香港麻将（三番起胡、十番封顶）、中国国标麻将 MCR（81 番种速查与 8 番起和）、四川血战到底（定缺与血战）及美式麻将（Charleston 换牌与 Joker），并配有 125 组真实牌面番种图解、实时听牌预览与可调节奏牌桌。',
+    faqs: [
+      ['雀步是免费的吗？需要下载或注册吗？', '完全免费，免下载、免注册。直接打开网页就能进入牌桌操练场或零基础互动课程，支持简体中文、繁體中文与 English。'],
+      ['支持哪些麻将规则与番种查询？', '内置香港、中国国标（MCR）、四川血战到底与美式麻将四套完整玩法，每套玩法均附带静态牌型示例与番种积分速查表。'],
+      ['零基础新手怎么最快上手？', '推荐从「我是完全新手」进入 40 课香港麻将路径，先认识万筒条字牌与顺子刻子，再开启牌桌实时听牌提示与「逐步观察」模式实战练习。'],
+      ['手机浏览器能看清全部手牌吗？', '支持。手机端采用双排完整手牌布局与全览牌河视图，点选一张牌可实时预览听牌与场上余张，再次点击即可出牌。']
+    ]
+  },
+  tw: {
+    brand: '雀步 Mahjong Steps',
+    homeTitle: '免費線上麻雀網頁版 - 免下載即開即玩 | 雀步 Mahjong Steps',
+    homeDesc: '免費線上麻雀網頁版，免下載、免註冊即開即玩！雀步 Mahjong Steps 提供香港麻雀、中國國標麻將（MCR）、四川血戰到底與美式麻將四套牌桌實戰與零基礎互動課程，含 125 組番種牌型圖解與即時聽牌提示。',
+    routes: {
+      fullplay: { title: '線上麻雀牌桌操練場（免費免下載）', desc: '免下載線上體驗香港麻雀、中國國標 MCR、四川血戰到底與美式麻將實戰牌桌，支援即時聽牌預覽。' },
+      course: { title: '香港麻雀零基礎課程與 30 組番種速查', desc: '40 課香港麻雀零基礎互動課程、12 局教學對局與 30 組真實牌型番種積分速查。' },
+      mcr: { title: '中國國標麻將 MCR 課程與 81 番種圖解', desc: '系統學習中國國標麻將 MCR 8 番起和規則，查閱全部 81 番種的完整真實牌型示例。' },
+      bridge: { title: '四川血戰到底課程與番型速查', desc: '學習四川血戰到底定缺、血戰與換三張規則，附常見番型牌面示例與牌桌實戰。' },
+      american: { title: '美式麻將教學、Charleston 換牌與 Joker 指南', desc: '互動掌握美式麻將牌型卡、Charleston 換牌流程、Joker 替代規則與經典示例牌型。' },
+      gallery: { title: '完整麻雀牌圖鑑（萬筒索字花與 Joker）', desc: '高清查看全部 43 張麻雀牌面：萬子、筒子、索子、風牌、三元牌、花牌與 Joker。' },
+      playground: { title: '短局牌桌練習', desc: '快速體驗數巡短局摸打與基礎聽牌決策練習。' },
+      rule: { title: '麻雀規則入門概覽', desc: '快速對比香港麻雀、國標麻將、四川血戰到底與美式麻將的核心規則。' },
+      lesson: { title: '麻雀基礎互動練習', desc: '透過互動識牌、拼牌與出牌決策題快速建立牌感。' }
+    },
+    overviewEyebrow: 'FREE ONLINE MAHJONG · PLAY & LEARN',
+    overviewTitle: '免費線上麻雀網頁版：免下載即開即玩，四套玩法一站練習',
+    overviewBody: '雀步（Mahjong Steps）是專為學習與實戰打造的純網頁麻雀練習場，無需下載 App 或註冊帳號，手機與電腦打開瀏覽器即可開局。支援香港麻雀（三番起胡、十番封頂）、中國國標麻將 MCR（81 番種速查與 8 番起和）、四川血戰到底（定缺與血戰）及美式麻將（Charleston 換牌與 Joker），並配有 125 組真實牌面番種圖解與即時聽牌預覽。',
+    faqs: [
+      ['雀步是免費的嗎？需要下載或註冊嗎？', '完全免費，免下載、免註冊。直接打開網頁即可進入牌桌操練場或零基礎互動課程，支援簡體中文、繁體中文與 English。'],
+      ['支援哪些麻雀規則與番種查詢？', '內置香港、中國國標（MCR）、四川血戰到底與美式麻將四套完整玩法，每套玩法均附帶靜態牌型示例與番種積分速查表。'],
+      ['零基礎新手怎麼最快上手？', '推薦從「我是完全新手」進入 40 課香港麻雀路徑，先認識萬筒索字牌與順子刻子，再開啟牌桌即時聽牌提示實戰練習。'],
+      ['手機瀏覽器能看清全部手牌嗎？', '支援。手機端採用雙排完整手牌佈局與全覽牌河視圖，點選一張牌可即時預覽聽牌與場上餘張，再次點擊即可出牌。']
+    ]
+  },
+  en: {
+    brand: 'Mahjong Steps',
+    homeTitle: 'Free Online Mahjong Web Game & Interactive Course | Mahjong Steps',
+    homeDesc: 'Play free online Mahjong directly in your browser with no download or sign-up. Learn and practise Hong Kong, Chinese Official (MCR), Sichuan Blood Battle, and American Mahjong with 125 visual pattern examples and live tenpai hints.',
+    routes: {
+      fullplay: { title: 'Free Online Mahjong Table Playground', desc: 'Play full Hong Kong, Chinese Official (MCR), Sichuan Blood Battle, and American Mahjong tables directly in your browser with live wait hints.' },
+      course: { title: 'Hong Kong Mahjong Course & 30 Faan Examples', desc: '40 interactive Hong Kong Mahjong lessons, 12 guided rounds, and a visual faan and points reference.' },
+      mcr: { title: 'Chinese Official (MCR) Course & All 81 Scoring Patterns', desc: 'Learn the 8-point minimum and explore visual hand examples for all 81 Chinese Official (MCR) scoring patterns.' },
+      bridge: { title: 'Sichuan Blood Battle Course & Pattern Guide', desc: 'Practise missing suit selection, Blood Battle flow, and Sichuan scoring patterns with visual hand examples.' },
+      american: { title: 'American Mahjong Course, Charleston & Joker Guide', desc: 'Learn the Charleston pass, Joker rules, and visual American Mahjong hand card examples.' },
+      gallery: { title: 'Complete Mahjong Tile Library', desc: 'Inspect all 43 Mahjong tiles including characters, dots, bamboo, winds, dragons, flowers, and jokers.' },
+      playground: { title: 'Short Table Practice', desc: 'Practise quick hands and discard decisions in a focused short table.' },
+      rule: { title: 'Mahjong Rules Overview', desc: 'Compare Hong Kong, Chinese Official (MCR), Sichuan Blood Battle, and American Mahjong rules.' },
+      lesson: { title: 'Interactive Mahjong Practice', desc: 'Build tile recognition, hand shapes, and discard instincts step by step.' }
+    },
+    overviewEyebrow: 'FREE ONLINE MAHJONG · PLAY & LEARN',
+    overviewTitle: 'Free online Mahjong in your browser — no download, four complete rulesets',
+    overviewBody: 'Mahjong Steps is a zero-install web practice table and interactive learning studio. Play and learn Hong Kong Mahjong, Chinese Official (MCR, all 81 scoring patterns), Sichuan Blood Battle, and American Mahjong on desktop or mobile, complete with 125 visual scoring-hand examples and live wait previews.',
+    faqs: [
+      ['Is Mahjong Steps free to play with no download?', 'Yes — completely free with no app install or account required. Open it in any desktop or mobile browser to play immediately.'],
+      ['Which Mahjong rulesets are included?', 'Four full rulesets are built in: Hong Kong Mahjong, Chinese Official (MCR), Sichuan Blood Battle, and American Mahjong, each with visual scoring examples.'],
+      ['Can a complete beginner learn here?', 'Yes. Start with the 40-lesson guided course to learn tiles, melds, and winning shapes, then turn on live tenpai wait hints at the table.'],
+      ['Does it work smoothly on mobile phones?', 'Yes. The mobile table uses a two-row full-hand view, tap-twice-to-discard controls, and a complete discard pool layout.']
+    ]
+  }
+};
+
+function updateDocumentMeta() {
+  if (typeof document === 'undefined') return;
+  const m = seoMeta[lang] || seoMeta.zh;
+  const routeEntry = (m.routes && m.routes[page]) || null;
+  const titleText = routeEntry ? `${routeEntry.title} | ${m.brand}` : m.homeTitle;
+  const descText = routeEntry ? routeEntry.desc : m.homeDesc;
+  try { document.title = titleText; } catch (_) {}
+  try {
+    const descEl = typeof document.querySelector === 'function'
+      ? document.querySelector('meta[name="description"]')
+      : null;
+    if (descEl && typeof descEl.setAttribute === 'function') {
+      descEl.setAttribute('content', descText);
+    }
+  } catch (_) {}
+}
+
+function renderSeoOverview() {
+  const m = seoMeta[lang] || seoMeta.zh;
+  const label = lang === 'en' ? 'About Mahjong Steps' : lang === 'tw' ? '關於雀步線上麻雀網頁版' : '关于雀步在线麻将网页版';
+  return `<section class="seo-overview" aria-label="${label}">
+    <div class="eyebrow">${m.overviewEyebrow}</div>
+    <h2>${m.overviewTitle}</h2>
+    <p>${m.overviewBody}</p>
+    <div class="seo-faq">${m.faqs.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>
+  </section>`;
+}
 const hand = ['m1', 'm2', 'm3', 'p1', 'p2', 'p3', 's1', 's2', 's3', 'm7', 'm8', 'm9', 'p5'];
 const advanced = ['m1', 'm2', 'm3', 'p2', 'p3', 'p4', 's3', 's4', 's5', 'm7', 'm8', 'm9', 'p5', 'z1'];
 
@@ -416,7 +522,8 @@ function renderHome() {
     </div>
     <div class="cards">${c.names.map((n, i) => `<button class="card" data-rule="${i}"><span class="icon">${['港', '中', '川', '美'][i]}</span><h3>${n}</h3><p>${c.summaries[i]}</p><span class="tag">${c.tags[i]} →</span></button>`).join('')}</div>
     <div class="gallery-link"><button class="btn alt" data-gallery>${galleryLabel}</button></div>
-  </section>`;
+  </section>
+  ${renderSeoOverview()}`;
 }
 
 function renderRule() {
@@ -515,6 +622,9 @@ function renderGallery() {
 }
 
 function render() {
+  if (page !== 'home' && window.MahjongTileArt && typeof MahjongTileArt.preloadAll === 'function') {
+    MahjongTileArt.preloadAll(true);
+  }
   if (page === 'fullplay' && window.MahjongFullPlayUI) {
     if (typeof MahjongFullPlayUI.renderInto === 'function') {
       MahjongFullPlayUI.renderInto(app);
@@ -522,6 +632,7 @@ function render() {
       app.innerHTML = MahjongFullPlayUI.html();
     }
     syncHash();
+    updateDocumentMeta();
     return;
   }
   if (window.MahjongFullPlayUI && typeof MahjongFullPlayUI.leave === 'function') {
@@ -547,6 +658,7 @@ function render() {
                     ? renderGallery()
                     : renderComplete();
   syncHash();
+  updateDocumentMeta();
 }
 
 function home() {
