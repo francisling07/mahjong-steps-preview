@@ -12,7 +12,8 @@
       lessonDone:'本课完成', nextLesson:'下一课：{title} →', map:'返回课程目录', reviewDone:'本轮复习结束',
       end:'已到本课程末尾，可以从目录选择旧课或复习错题。', allDone:'九章三十六课已全部掌握！',
       source:'NMJL 官方年度牌型卡 ↗', rules:'美式麻将规则解释 ↗', reset:'清除美式课程进度', confirm:'确定只清除美式麻将课程进度吗？',
-      storage:'浏览器存储不可用，刷新后可能丢失本次进度。', noReview:'目前没有错题。', selected:'已选步骤：{n}' },
+      storage:'浏览器存储不可用，刷新后可能丢失本次进度。', noReview:'目前没有错题。', selected:'已选步骤：{n}',
+      reference:'原创牌型卡速查', referenceSub:'对照教学牌型卡行的具体牌面形态、计分倍数与 Joker 用法示例（原创样例，非 NMJL 年度卡）。' },
     tw: { back:'← 返回選擇玩法', title:'美式麻雀 · 九章課程', sub:'從識牌、讀年度卡，到換牌、Joker、選打哪張牌和連續教學局。',
       scope:'以 NMJL 美式麻雀為學習基準。所有牌型卡行和標值均為原創教學樣例，不是 2026 年度牌型；正式對局請使用當年官方卡並確認桌上支付約定。',
       continue:'繼續學習：{title} →', start:'從第一課開始 →', fast:'已會其他玩法？從年度卡讀法開始 →', review:'複習錯題（{n}）',
@@ -22,7 +23,8 @@
       lessonDone:'本課完成', nextLesson:'下一課：{title} →', map:'返回課程目錄', reviewDone:'本輪複習結束',
       end:'已到本課程末尾，可以從目錄選擇舊課或複習錯題。', allDone:'九章三十六課已全部掌握！',
       source:'NMJL 官方年度牌型卡 ↗', rules:'美式麻雀規則解釋 ↗', reset:'清除美式課程進度', confirm:'確定只清除美式麻雀課程進度嗎？',
-      storage:'瀏覽器儲存不可用，重新整理後可能遺失本次進度。', noReview:'目前沒有錯題。', selected:'已選步驟：{n}' },
+      storage:'瀏覽器儲存不可用，重新整理後可能遺失本次進度。', noReview:'目前沒有錯題。', selected:'已選步驟：{n}',
+      reference:'原創牌型卡速查', referenceSub:'對照教學牌型卡行的具體牌面形態、計分倍數與 Joker 用法示例（原創樣例，非 NMJL 年度卡）。' },
     en: { back:'← Back to styles', title:'American Mah Jongg · Nine Chapters', sub:'Learn tiles and the annual card, then practise the Charleston, jokers, discards and guided hands.',
       scope:'Based on NMJL-style American Mah Jongg. Every sample hand and value here is original practice material, not a 2026 card line. Use the current official card and confirm payment rules at your table.',
       continue:'Continue: {title} →', start:'Start with lesson one →', fast:'Know another style? Start with the card →', review:'Review mistakes ({n})',
@@ -32,7 +34,8 @@
       lessonDone:'Lesson complete', nextLesson:'Next lesson: {title} →', map:'Back to course map', reviewDone:'Review complete',
       end:'You reached the end of the path. Pick another lesson or review mistakes from the map.', allDone:'All 36 lessons mastered!',
       source:'Official NMJL annual card ↗', rules:'American Mah Jongg rule explanations ↗', reset:'Clear American course progress', confirm:'Clear only the American course progress?',
-      storage:'Browser storage is unavailable. Progress may be lost on refresh.', noReview:'No mistakes to review right now.', selected:'Selected steps: {n}' }
+      storage:'Browser storage is unavailable. Progress may be lost on refresh.', noReview:'No mistakes to review right now.', selected:'Selected steps: {n}',
+      reference:'Practice card reference', referenceSub:'Visual tile examples of the original teaching card lines, values and Joker rules (not an official NMJL card).' }
   };
   var lang = 'zh', state = fresh(), memory = null, storageOk = null;
   function fresh() { return { view:'map', lessonId:null, index:0, choice:null, picks:[], order:[], answered:null, reviewing:false, reviewIds:[], reviewIndex:0 }; }
@@ -122,6 +125,7 @@
     var d=el && el.dataset || {};
     if (d.americanBack!==undefined) return 'back';
     if (d.americanMap!==undefined) { state=fresh(); return 'view'; }
+    if (d.americanReference!==undefined) { state=fresh(); state.view='reference'; return 'view'; }
     if (d.americanOpen!==undefined) { open(d.americanOpen); return 'view'; }
     if (d.americanContinue!==undefined) { var l=target(); if (l) open(l.id); return 'view'; }
     if (d.americanReview!==undefined) { review(); return 'view'; }
@@ -163,6 +167,7 @@
       '<div class="course-stats"><span class="course-stat">'+esc(tr('completed',{n:completed,total:E.lessons.length}))+'</span><span class="course-stat">'+esc(tr('mastered',{n:p.solved.length,total:Object.keys(E.questionById).length}))+'</span></div>'+
       '<div class="course-entry">'+(t?'<button class="btn" data-american-continue>'+esc(tr('continue',{title:local(t.title)}))+'</button>':'')+
       '<button class="btn alt" data-american-open="am-1-1">'+esc(tr('start'))+'</button><button class="btn alt" data-american-open="am-2-1">'+esc(tr('fast'))+'</button>'+
+      (g.MahjongFanExamples?'<button class="btn alt" data-american-reference>'+esc(tr('reference'))+'</button>':'')+
       '<button class="btn alt" data-american-review>'+esc(tr('review',{n:p.review.length}))+'</button><button class="btn alt" data-american-reset>'+esc(tr('reset'))+'</button></div>';
     E.chapters.forEach(function (c) {
       html+='<section class="course-chapter"><h2>'+esc(local(c.title))+'</h2><p>'+esc(local(c.desc))+'</p><div class="course-lessons">';
@@ -204,6 +209,15 @@
     var next=E.following(state.lessonId),p=load(),all=E.lessons.every(function (l) { return E.complete(p,l.id); });
     return '<button class="back" data-american-map>'+esc(tr('map'))+'</button><div class="eyebrow">AMERICAN MAH JONGG · LEARNING PATH</div><h1>'+esc(tr('lessonDone'))+'</h1><div class="panel"><p class="sub">'+esc(next?tr('sub'):tr('end'))+'</p>'+(all?'<p class="course-note">'+esc(tr('allDone'))+'</p>':'')+'<div class="course-actions">'+(next?'<button class="btn" data-american-open="'+esc(next.id)+'">'+esc(tr('nextLesson',{title:local(next.title)}))+'</button>':'')+'<button class="btn alt" data-american-map>'+esc(tr('map'))+'</button></div></div>';
   }
-  function html() { return '<div class="workspace course-root american-root">'+(state.view==='question'?questionView():state.view==='done'?doneView():state.view==='reviewDone'?'<button class="back" data-american-map>'+esc(tr('map'))+'</button><div class="panel"><h1>'+esc(tr('reviewDone'))+'</h1><p>'+esc(tr('noReview'))+'</p></div>':mapView())+'</div>'; }
+  function referenceView() {
+    var exMod=g.MahjongFanExamples, items=exMod&&exMod.american||[];
+    var html='<button class="back" data-american-map>'+esc(tr('map'))+'</button><div class="eyebrow">AMERICAN MAH JONGG · PRACTICE CARD</div><h1>'+esc(tr('reference'))+'</h1><p class="sub">'+esc(tr('referenceSub'))+'</p><section class="course-reference-section"><div class="course-reference-grid">';
+    items.forEach(function (item) {
+      var exHtml=exMod.renderExampleHtml(item.example,lang,tile,esc);
+      html+='<article class="course-reference-card" data-am-reference-id="'+esc(item.id)+'"><div><h3>'+esc(local(item.title))+'</h3><span class="course-faan">'+esc(local(item.value))+'</span></div><p>'+esc(local(item.description))+'</p>'+exHtml+'</article>';
+    });
+    return html+'</div></section>'+source();
+  }
+  function html() { return '<div class="workspace course-root american-root">'+(state.view==='question'?questionView():state.view==='done'?doneView():state.view==='reference'?referenceView():state.view==='reviewDone'?'<button class="back" data-american-map>'+esc(tr('map'))+'</button><div class="panel"><h1>'+esc(tr('reviewDone'))+'</h1><p>'+esc(tr('noReview'))+'</p></div>':mapView())+'</div>'; }
   g.MahjongAmericanUI={ enter:function () { state=fresh(); }, setLang:function (value) { if(messages[value]) lang=value; }, dispatch:dispatch, html:html };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

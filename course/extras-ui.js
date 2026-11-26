@@ -40,8 +40,13 @@
   function settlementHtml(r,lang){
     return '<div class="course-payment" role="status"><span>'+t('payers',lang)+'<strong>'+r.payerCount+'</strong></span><span>'+t('each',lang)+'<strong>'+r.paymentEach+'</strong></span><span>'+t('total',lang)+'<strong>'+r.total+' <small>'+t('points',lang)+'</small></strong></span></div>';
   }
+  function refTile(id,lang){
+    var art=g.MahjongTileArt;if(!art)return '';
+    var label=g.MahjongUtils?g.MahjongUtils.tileName(id,lang,'default'):id;
+    return '<span class="tile" role="img" aria-label="'+esc(label)+'">'+art.svg(id)+'</span>';
+  }
   function referenceHtml(lang,fan,mode){
-    var profile=g.MahjongCourseData.profile, payment=Rules.settlement(fan,mode);
+    var profile=g.MahjongCourseData.profile, payment=Rules.settlement(fan,mode), exMod=g.MahjongFanExamples;
     var html='<button class="back" data-course-map>'+t('back',lang)+'</button><div class="eyebrow" style="margin-top:28px">'+t('profile',lang)+'</div><h1>'+t('reference',lang)+'</h1><p class="sub">'+t('scope',lang)+'</p><p class="course-source"><a href="'+esc(profile.source)+'" target="_blank" rel="noopener">'+t('source',lang)+'</a> · <a href="'+esc(profile.document)+'" target="_blank" rel="noopener">'+t('full',lang)+'</a></p>';
     html+='<section class="panel course-calculator"><h2>'+t('calculator',lang)+'</h2><p>'+t('calcNote',lang)+'</p><div class="course-fans" role="group" aria-label="'+t('fan',lang)+'">';
     for(var f=3;f<=10;f++)html+='<button class="btn alt'+(fan===f?' selected':'')+'" data-course-fan="'+f+'" aria-pressed="'+(fan===f)+'">'+f+' '+t('fan',lang)+'</button>';
@@ -49,7 +54,8 @@
     [['common',0,14],['limits',14,25],['flowers',25,30]].forEach(function(group){
       html+='<section class="course-reference-section"><h2>'+t(group[0],lang)+'</h2><div class="course-reference-grid">';
       g.MahjongHKReference.slice(group[1],group[2]).forEach(function(item){
-        html+='<article class="course-reference-card" data-reference-id="'+esc(item.id)+'"><div><h3>'+esc(local(item.title,lang))+'</h3><span class="course-faan">'+esc(item.fan)+' '+t('fan',lang)+'</span></div><p>'+esc(local(item.description,lang))+'</p></article>';
+        var exampleHtml=exMod&&exMod.hk&&exMod.hk[item.id]?exMod.renderExampleHtml(exMod.hk[item.id],lang,function(tid){return refTile(tid,lang);},esc):'';
+        html+='<article class="course-reference-card" data-reference-id="'+esc(item.id)+'"><div><h3>'+esc(local(item.title,lang))+'</h3><span class="course-faan">'+esc(item.fan)+' '+t('fan',lang)+'</span></div><p>'+esc(local(item.description,lang))+'</p>'+exampleHtml+'</article>';
       }); html+='</div></section>';
     });return html;
   }
