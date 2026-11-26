@@ -33,7 +33,8 @@ const suites = [
   'qa/course-ui-vm-check.cjs',
   'qa/bridge-ui-vm-check.cjs',
   'qa/phase1-regression-check.cjs',
-  'qa/phase2-decoupling-check.cjs'
+  'qa/phase2-decoupling-check.cjs',
+  'qa/phase3-ui-check.cjs'
 ];
 
 let passed = 0;

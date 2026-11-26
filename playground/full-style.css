@@ -269,3 +269,137 @@ body:has(.fp-game){overflow:hidden}
   .fp-game .fp-river-left .fp-river-tiles,.fp-game .fp-river-right .fp-river-tiles{padding:2px;gap:1px}
   .fp-game .pg-result{top:80px;right:7px;width:calc(100% - 14px);max-height:calc(100dvh - 165px);padding:16px}
 }
+
+/* === Phase 3 UI Upgrades: Turn highlight, badges, Tenpai bar, pool overview, winner hand, mobile 2-row hand & full rivers === */
+.fp-opponent.is-turn{border-color:#ffd770;box-shadow:0 0 0 2px #ffd77088,0 6px 18px #0a2d2088;background:#1d5f47eb}
+.fp-own-seat.is-turn{border-top-color:#f5cc66;box-shadow:inset 0 2px 0 #ffe39455}
+.fp-wind-pill,.fp-dealer-badge,.fp-round-badge,.fp-missing-badge{display:inline-flex;align-items:center;justify-content:center;border-radius:5px;font-size:10px;font-weight:800;line-height:1;padding:2px 5px;vertical-align:middle}
+.fp-wind-pill{background:#f7ebc622;border:1px solid #e6d7a566;color:#ffefbe;margin-right:4px}
+.fp-dealer-badge{background:#d44b38;color:#fff8e6;margin-right:4px}
+.fp-round-badge{background:#123d2e;border:1px solid #d5c07d88;color:#ffeaa0;padding:3px 8px;border-radius:999px;font-size:10px;letter-spacing:.05em}
+.fp-missing-badge{margin-left:5px;color:#fff}
+.fp-missing-badge.fp-suit-m{background:#b44536}
+.fp-missing-badge.fp-suit-p{background:#2f658e}
+.fp-missing-badge.fp-suit-s{background:#2d764d}
+.fp-opponent-label em{font-style:normal;color:#ffe27a;font-weight:800}
+.fp-keys-hint{margin-left:auto;font-size:10px;color:#c9d9be;opacity:.85}
+
+/* River header as clickable button to open full discard pool overview */
+.fp-river-label{width:100%;border:0;text-align:left;cursor:pointer;font-family:inherit}
+.fp-river-label:hover{background:#155947}
+.fp-river-zone[hidden],.fp-flower-zone[hidden],.fp-zone-melds[hidden],.fp-game-tools>button[hidden]{display:none}
+
+/* More spacious rivers so players can see many more discards at once without horizontal scroll */
+.fp-game .fp-play-area{inset:78px 98px 10px}
+.fp-game .fp-opponent-top{top:8px;min-height:62px;padding:6px 10px;gap:4px}
+.fp-game .fp-opponent-top .fp-backs i{width:15px;height:21px}
+.fp-game .fp-river-top{left:22%;top:0;width:56%;height:31%}
+.fp-game .fp-river-bottom{left:22%;bottom:0;width:56%;height:31%}
+.fp-game .fp-river-left{top:8%;width:22%;height:84%}
+.fp-game .fp-river-right{top:8%;width:22%;height:84%}
+.fp-game .fp-table-center{left:24%;top:32%;width:52%;height:36%}
+.fp-game .fp-river-tiles{align-content:flex-start;gap:2px;padding:3px 4px}
+.fp-game .fp-river-tile .tile{width:28px;height:39px}
+.fp-game .fp-table-last .tile{width:48px;height:66px}
+.fp-game .fp-wall-mark b{font-size:20px}
+
+/* Decision bar + Tenpai wait preview */
+.fp-decision-slot{flex:none}
+.fp-game .fp-decision-bar{display:flex;flex-direction:column;align-items:stretch;gap:7px;min-height:52px;padding:8px 14px}
+.fp-decision-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.fp-auto-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;background:#2f673f22;color:#275935;font-size:11px;font-weight:800;margin-left:4px}
+.fp-tenpai-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 10px;border-radius:9px;background:#e4f2dc;border:1px solid #9dc494;color:#214b2b;font-size:12px}
+.fp-tenpai-title{font-weight:800;white-space:nowrap}
+.fp-tenpai-waits{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fp-tenpai-wait{display:inline-flex;align-items:center;gap:4px;padding:2px 6px 2px 3px;border-radius:6px;background:#fffdf4;border:1px solid #b5cfa8}
+.fp-tenpai-wait .tile{width:24px;height:34px}
+.fp-tenpai-wait small{font-size:11px;font-weight:800;color:#265632}
+.fp-tenpai-wait.empty{opacity:.52}
+.fp-tenpai-wait.warn{border-color:#d8a454}
+.fp-tenpai-meta{margin-left:auto;font-size:11px;font-weight:700;color:#2c5a37}
+.fp-tenpai-meta em{font-style:normal;color:#9a5d1f}
+
+/* Hand rack: fit all 14 tiles cleanly without horizontal scrolling on desktop & tablet */
+.fp-game .fp-rack{display:flex;align-items:flex-end;justify-content:center;flex-wrap:nowrap;gap:3px;min-height:82px;max-height:none;overflow:visible;padding:12px 4px 4px}
+.fp-game .fp-tile .tile{width:clamp(34px,calc((100vw - 340px) / 15.2),54px);height:auto;aspect-ratio:5/7}
+.fp-game .fp-tile.has-tenpai{border-color:#e8c56b77}
+.fp-tenpai-dot{position:absolute;right:-2px;top:-7px;z-index:3;min-width:16px;height:16px;padding:0 3px;border-radius:999px;background:#e8a832;color:#1f2e17;font-size:9px;font-weight:900;line-height:16px;text-align:center;box-shadow:0 1px 3px #0004;pointer-events:none}
+.fp-tap-hint{position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);z-index:4;padding:2px 5px;border-radius:999px;background:#f5ca66;color:#22381c;font-size:8px;font-weight:900;line-height:1;white-space:nowrap;box-shadow:0 2px 4px #0004;pointer-events:none}
+
+/* Full discard pool & remaining counter overlay */
+.fp-pool-panel{position:absolute;z-index:27;inset:68px 16px 16px;overflow:auto;padding:20px 22px;border:2px solid #d5b56d;border-radius:14px;background:#fffdf2;color:#263b2c;box-shadow:0 20px 55px #062119b8}
+.fp-pool-panel h2{margin:0 30px 12px 0;font-size:19px;color:#224229}
+.fp-pool-panel h3{margin:16px 0 8px;font-size:13px;color:#4a674d;letter-spacing:.03em}
+.fp-pool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.fp-pool-seat{padding:10px 12px;border:1px solid #d8dfc9;border-radius:10px;background:#f7f8ec}
+.fp-pool-seat-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:6px;color:#28492e}
+.fp-pool-melds{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.fp-pool-tiles{display:flex;flex-wrap:wrap;gap:3px}
+.fp-pool-tile .tile{width:28px;height:39px}
+.fp-pool-empty{font-size:12px;color:#82917e}
+.fp-counter-grid{display:flex;flex-direction:column;gap:8px}
+.fp-counter-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #dde3cf;border-radius:10px;background:#f8f9ee}
+.fp-counter-suit{min-width:44px;font-size:12px;font-weight:800;color:#35593c}
+.fp-counter-tiles{display:flex;flex-wrap:wrap;gap:5px}
+.fp-counter-cell{display:inline-flex;flex-direction:column;align-items:center;gap:2px}
+.fp-counter-cell .tile{width:28px;height:39px}
+.fp-counter-cell b{font-size:11px;line-height:1;color:#285531}
+.fp-counter-cell.zero{opacity:.38}
+.fp-counter-cell.zero b{color:#a14232}
+
+/* Winner hand decomposition inside settlement modal */
+.fp-game .pg-result{width:min(540px,calc(100% - 28px));max-height:calc(100dvh - 86px)}
+.fp-winner-card{margin:10px 0 14px;padding:12px;border:1px solid #d9dfc5;border-radius:10px;background:#f7f9ec}
+.fp-winner-head{margin:0 0 10px;font-size:13px;line-height:1.5;color:#294630}
+.fp-win-hand{display:flex;flex-direction:column;gap:8px}
+.fp-win-groups{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px}
+.fp-win-group{position:relative;display:inline-flex;align-items:center;gap:2px;padding:4px 5px;border-radius:7px;background:#edf2df;border:1px solid #d1dbc0}
+.fp-win-group.exposed{background:#e3edd6;border-color:#9fc099}
+.fp-win-group.pair{background:#f7efda;border-color:#dfc486}
+.fp-win-group>small{font-size:9px;font-weight:800;color:#35593b;margin-right:3px}
+.fp-win-tile{position:relative;display:inline-flex}
+.fp-win-tile .tile{width:31px;height:43px}
+.fp-win-tile.is-win-tile .tile{outline:2px solid #d44b38;box-shadow:0 0 0 3px #f6c77088}
+.fp-win-badge{position:absolute;right:-3px;top:-7px;z-index:3;padding:1px 4px;border-radius:999px;background:#d44b38;color:#fff8e6;font-size:8px;font-weight:900;line-height:1.2}
+.fp-win-flowers{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:11px;color:#4f684c}
+.fp-win-flowers .tile{width:24px;height:33px}
+
+@media(max-width:960px){
+  .fp-keys-hint{display:none}
+  .fp-game .fp-tile .tile{width:clamp(32px,calc((100vw - 270px) / 15),48px)}
+}
+
+/* Mobile immersive full-screen table & 2-row full-visibility ergonomic hand rack */
+@media(max-width:800px){
+  .fp-game{inset:0;z-index:20;height:100dvh}
+  .fp-game .fp-tile .tile{width:clamp(34px,calc((100vw - 56px) / 14.8),46px)}
+  .fp-pool-panel{inset:62px 8px 8px;padding:14px}
+  .fp-pool-grid{grid-template-columns:1fr}
+}
+
+@media(max-width:600px){
+  .fp-game-head{min-height:66px;padding:4px 6px}
+  .fp-game .fp-table-frame{margin:4px;border-width:4px;border-radius:12px}
+  .fp-game .fp-opponent-top{top:4px;width:62%;min-height:48px;padding:4px 7px}
+  .fp-game .fp-opponent-top .fp-backs{display:none}
+  .fp-game .fp-opponent-left,.fp-game .fp-opponent-right{width:46px;padding:3px}
+  .fp-game .fp-opponent-left .fp-backs,.fp-game .fp-opponent-right .fp-backs{display:none}
+  .fp-game .fp-play-area{inset:54px 50px 6px}
+  .fp-game .fp-river-top{left:14%;width:72%;height:31%}
+  .fp-game .fp-river-bottom{left:14%;width:72%;height:31%}
+  .fp-game .fp-river-left,.fp-game .fp-river-right{top:10%;width:24%;height:80%}
+  .fp-game .fp-table-center{left:25%;top:32%;width:50%;height:36%}
+  .fp-game .fp-river-tile .tile{width:20px;height:28px}
+  .fp-game .fp-decision-bar{min-height:46px;padding:6px 8px;gap:5px}
+  .fp-decision-row{gap:6px}
+  .fp-tenpai-bar{padding:4px 7px;gap:5px;font-size:11px}
+  .fp-tenpai-wait .tile{width:20px;height:28px}
+  .fp-game .fp-own-seat{padding:6px 6px 8px}
+  /* 2-row wrapped hand on narrow mobile: ALL 14 tiles visible at once with large tap targets! */
+  .fp-game .fp-rack{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-end;gap:6px 3px;min-height:0;max-height:none;padding:10px 2px 6px;overflow:visible}
+  .fp-game .fp-draw-slot{margin-left:6px;padding-left:6px;border-left:2px solid #f0c969}
+  .fp-game .fp-tile .tile{width:clamp(40px,calc((100vw - 44px) / 7.6),52px);height:auto;aspect-ratio:5/7}
+  .fp-game .fp-tile.selected{transform:translateY(-5px)}
+  .fp-win-tile .tile{width:26px;height:36px}
+  .fp-game .pg-result{top:68px;right:6px;left:6px;width:auto;max-height:calc(100dvh - 80px)}
+}

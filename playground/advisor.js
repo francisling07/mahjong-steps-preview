@@ -3,6 +3,7 @@
   'use strict';
   const isNode=typeof module!=='undefined'&&module.exports;
   const Engine=isNode?require('./full-engine.js'):g.MahjongFullPlayEngine;
+  const Judges=isNode?require('./judges.js'):g.MahjongPlaygroundJudges;
   const HK=isNode?require('../course/hk-rules.js'):g.HKLearningRules;
   const SC=isNode?require('../course/sichuan-rules.js'):g.SichuanLearningRules;
   const MCR=isNode?require('../course/mcr-score.js'):g.MahjongMCRScore;
@@ -77,5 +78,49 @@
     if(s.mode==='mcr')return join(L(`牌墙 ${wall} 张，已补花 ${s.flowers[0].length} 张；起和须有 8 个非花番种分。`,`牌牆 ${wall} 張，已補花 ${s.flowers[0].length} 張；起和須有 8 個非花番種分。`,`Wall: ${wall}; your flowers: ${s.flowers[0].length}. A win needs eight non-flower points.`));
     return join(L(`牌墙 ${wall} 张；胡牌还需满足本桌最低番数。`,`牌牆 ${wall} 張；胡牌還需滿足本桌最低番數。`,`Wall: ${wall}. A win must meet the table's minimum fan.`));
   }
-  const api={advice,hint,remaining,visible};g.MahjongFullPlayAdvisor=api;if(isNode)module.exports=api;
+  function candidateTiles(mode){
+    const suited='mps'.split('').flatMap(k=>Array.from({length:9},(_,n)=>k+(n+1)));
+    return mode==='sc'?suited:suited.concat(Array.from({length:7},(_,n)=>'z'+(n+1)));
+  }
+  function waitsForDiscard(s,discardIndex){
+    if(!s||s.phase!=='turn'||s.turn!==0||!Number.isInteger(discardIndex))return null;
+    if(s.mode==='am')return {waits:[],totalRemaining:0,hasLegalWin:false};
+    const hand=s.hands[0];
+    if(discardIndex<0||discardIndex>=hand.length)return null;
+    const rest=hand.slice(0,discardIndex).concat(hand.slice(discardIndex+1));
+    if(s.mode==='sc'&&rest.some(t=>t[0]===s.missingSuit?.[0]))return {waits:[],totalRemaining:0,hasLegalWin:false};
+    const visCounts=cts(visible(s));
+    const remOf=tile=>Math.max(0,totalCopies(tile)-(visCounts[tile]||0));
+    const waits=[];
+    let totalRemaining=0,hasLegalWin=false;
+    for(const x of candidateTiles(s.mode)){
+      if(s.mode==='sc'&&x[0]===s.missingSuit?.[0])continue;
+      const testHand=rest.concat(x);
+      const shapeOk=s.mode==='hk'?HK.isWinning(testHand,s.melds[0]):s.mode==='mcr'?MCR.shape(testHand,s.melds[0]):SC.isWinning(testHand,s.melds[0],s.missingSuit[0]);
+      if(!shapeOk)continue;
+      const rem=remOf(x);
+      let legal=true;
+      if(Judges){
+        if(s.mode==='hk'){const j=Judges.hkScore(testHand,s.melds[0],0,'discard',s.roundWind);legal=!!j?.legal;}
+        else if(s.mode==='mcr'){const j=MCR.evaluate(testHand,s.melds[0],{source:'discard',seatWind:'z1',roundWind:s.roundWind||'z1',flowers:s.flowers?.[0]?.length||0,winTile:x});legal=!!j?.legal;}
+      }
+      if(legal)hasLegalWin=true;
+      totalRemaining+=rem;
+      waits.push({tile:x,remaining:rem,legal});
+    }
+    return {waits,totalRemaining,hasLegalWin};
+  }
+  function tenpaiMap(s){
+    const out=Object.create(null);
+    if(!s||s.phase!=='turn'||s.turn!==0||s.mode==='am')return out;
+    const a=Engine.available(s);if(!a?.discards?.length)return out;
+    const seenTile=Object.create(null);
+    for(const i of a.discards){
+      const t=s.hands[0][i];
+      if(!(t in seenTile))seenTile[t]=waitsForDiscard(s,i);
+      if(seenTile[t]&&seenTile[t].waits.length)out[i]=seenTile[t];
+    }
+    return out;
+  }
+  const api={advice,hint,remaining,visible,waitsForDiscard,tenpaiMap};g.MahjongFullPlayAdvisor=api;if(isNode)module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:window);

@@ -515,6 +515,18 @@ function renderGallery() {
 }
 
 function render() {
+  if (page === 'fullplay' && window.MahjongFullPlayUI) {
+    if (typeof MahjongFullPlayUI.renderInto === 'function') {
+      MahjongFullPlayUI.renderInto(app);
+    } else {
+      app.innerHTML = MahjongFullPlayUI.html();
+    }
+    syncHash();
+    return;
+  }
+  if (window.MahjongFullPlayUI && typeof MahjongFullPlayUI.leave === 'function') {
+    MahjongFullPlayUI.leave();
+  }
   app.innerHTML = page === 'course'
     ? MahjongCourseUI.html()
     : page === 'bridge'
@@ -523,19 +535,17 @@ function render() {
         ? MahjongAmericanUI.html()
         : page === 'mcr'
           ? MahjongMCRUI.html()
-          : page === 'fullplay'
-            ? MahjongFullPlayUI.html()
-            : page === 'playground'
-              ? MahjongPlaygroundUI.html()
-              : page === 'home'
-                ? renderHome()
-                : page === 'rule'
-                  ? renderRule()
-                  : page === 'lesson'
-                    ? renderLesson()
-                    : page === 'gallery'
-                      ? renderGallery()
-                      : renderComplete();
+          : page === 'playground'
+            ? MahjongPlaygroundUI.html()
+            : page === 'home'
+              ? renderHome()
+              : page === 'rule'
+                ? renderRule()
+                : page === 'lesson'
+                  ? renderLesson()
+                  : page === 'gallery'
+                    ? renderGallery()
+                    : renderComplete();
   syncHash();
 }
 
@@ -796,11 +806,22 @@ if (brandEl) {
   });
 }
 
+if (window.MahjongFullPlayUI && typeof MahjongFullPlayUI.setOnUpdate === 'function') {
+  MahjongFullPlayUI.setOnUpdate(() => {
+    if (page === 'fullplay') render();
+  });
+}
+
 if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
   window.addEventListener('hashchange', () => {
     if (typeof location === 'undefined' || !location) return;
     if (location.hash === lastSyncedHash) return;
     applyHash(location.hash, true);
+  });
+  window.addEventListener('keydown', e => {
+    if (page === 'fullplay' && window.MahjongFullPlayUI && typeof MahjongFullPlayUI.handleKey === 'function') {
+      if (MahjongFullPlayUI.handleKey(e)) render();
+    }
   });
 }
 
