@@ -479,6 +479,23 @@ function init(fromHash) {
   if (fromHash && typeof location !== 'undefined' && location && location.hash && location.hash !== '#' && location.hash !== '#home') {
     applyHash(location.hash, false);
   }
+  const hasPrerendered = fromHash
+    && page === 'home'
+    && lang === 'zh'
+    && app
+    && app.dataset
+    && app.dataset.prerendered === 'zh'
+    && app.children
+    && app.children.length > 0;
+  if (hasPrerendered) {
+    delete app.dataset.prerendered;
+    syncHash();
+    updateDocumentMeta();
+    return;
+  }
+  if (app && app.dataset && app.dataset.prerendered) {
+    delete app.dataset.prerendered;
+  }
   render();
 }
 

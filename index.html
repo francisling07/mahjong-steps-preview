@@ -33,10 +33,16 @@
   <meta name="twitter:image:alt" content="雀步 Mahjong Steps 免费在线麻将网页版预览封面">
 
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="course/course.css">
-  <link rel="stylesheet" href="course/mcr.css">
-  <link rel="stylesheet" href="playground/style.css">
-  <link rel="stylesheet" href="playground/full-style.css">
+  <link rel="stylesheet" href="course/course.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="course/mcr.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="playground/style.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="playground/full-style.css" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="course/course.css">
+    <link rel="stylesheet" href="course/mcr.css">
+    <link rel="stylesheet" href="playground/style.css">
+    <link rel="stylesheet" href="playground/full-style.css">
+  </noscript>
 
   <script type="application/ld+json">
   {
@@ -120,7 +126,7 @@
         </select>
       </label>
     </header>
-    <main id="app">
+    <main id="app" data-prerendered="zh">
       <section class="hero">
         <div>
           <div class="eyebrow">A LITTLE PRACTICE, A LOT OF JOY</div>
@@ -144,28 +150,28 @@
             <div class="board-center">
               <span class="board-label">MAHJONG STEPS</span>
               <div class="board-scatter">
-                <span class="scatter scatter-0"><span class="tile"><img class="tile-art" src="assets/hongkong/27-bamboos-2.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">2</span></span></span>
-                <span class="scatter scatter-1"><span class="tile"><img class="tile-art" src="assets/hongkong/20-circles-4.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">4</span></span></span>
-                <span class="scatter scatter-2"><span class="tile"><img class="tile-art" src="assets/hongkong/13-characters-6.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">6</span></span></span>
-                <span class="scatter scatter-3"><span class="tile"><img class="tile-art" src="assets/hongkong/07-north-wind.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">N</span></span></span>
-                <span class="scatter scatter-4"><span class="tile"><img class="tile-art" src="assets/hongkong/10-characters-3.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">3</span></span></span>
-                <span class="scatter scatter-5"><span class="tile"><img class="tile-art" src="assets/hongkong/24-circles-8.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">8</span></span></span>
+                <span class="scatter scatter-0"><span class="tile"><img class="tile-art" src="assets/hongkong/27-bamboos-2.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">2</span></span></span>
+                <span class="scatter scatter-1"><span class="tile"><img class="tile-art" src="assets/hongkong/20-circles-4.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">4</span></span></span>
+                <span class="scatter scatter-2"><span class="tile"><img class="tile-art" src="assets/hongkong/13-characters-6.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">6</span></span></span>
+                <span class="scatter scatter-3"><span class="tile"><img class="tile-art" src="assets/hongkong/07-north-wind.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">N</span></span></span>
+                <span class="scatter scatter-4"><span class="tile"><img class="tile-art" src="assets/hongkong/10-characters-3.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">3</span></span></span>
+                <span class="scatter scatter-5"><span class="tile"><img class="tile-art" src="assets/hongkong/24-circles-8.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">8</span></span></span>
               </div>
             </div>
             <div class="board-rack">
-              <span class="tile"><img class="tile-art" src="assets/hongkong/27-bamboos-2.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">2</span></span>
-              <span class="tile"><img class="tile-art" src="assets/hongkong/28-bamboos-3.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">3</span></span>
-              <span class="tile"><img class="tile-art" src="assets/hongkong/29-bamboos-4.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">4</span></span>
-              <span class="tile"><img class="tile-art" src="assets/hongkong/19-circles-3.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">3</span></span>
-              <span class="tile"><img class="tile-art" src="assets/hongkong/19-circles-3.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">3</span></span>
-              <span class="tile"><img class="tile-art" src="assets/hongkong/19-circles-3.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">3</span></span>
-              <span class="tile"><img class="tile-art" src="assets/hongkong/14-characters-7.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">7</span></span>
-              <span class="tile"><img class="tile-art" src="assets/hongkong/15-characters-8.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">8</span></span>
-              <span class="tile"><img class="tile-art" src="assets/hongkong/16-characters-9.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">9</span></span>
-              <span class="tile"><img class="tile-art" src="assets/hongkong/02-green-dragon.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">G</span></span>
-              <span class="tile"><img class="tile-art" src="assets/hongkong/02-green-dragon.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">G</span></span>
-              <span class="tile"><img class="tile-art" src="assets/hongkong/02-green-dragon.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">G</span></span>
-              <span class="tile"><img class="tile-art" src="assets/hongkong/04-east-wind.svg" decoding="async" loading="eager" alt="" draggable="false"><span class="tile-index">E</span></span>
+              <span class="tile"><img class="tile-art" src="assets/hongkong/27-bamboos-2.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">2</span></span>
+              <span class="tile"><img class="tile-art" src="assets/hongkong/28-bamboos-3.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">3</span></span>
+              <span class="tile"><img class="tile-art" src="assets/hongkong/29-bamboos-4.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">4</span></span>
+              <span class="tile"><img class="tile-art" src="assets/hongkong/19-circles-3.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">3</span></span>
+              <span class="tile"><img class="tile-art" src="assets/hongkong/19-circles-3.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">3</span></span>
+              <span class="tile"><img class="tile-art" src="assets/hongkong/19-circles-3.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">3</span></span>
+              <span class="tile"><img class="tile-art" src="assets/hongkong/14-characters-7.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">7</span></span>
+              <span class="tile"><img class="tile-art" src="assets/hongkong/15-characters-8.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">8</span></span>
+              <span class="tile"><img class="tile-art" src="assets/hongkong/16-characters-9.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">9</span></span>
+              <span class="tile"><img class="tile-art" src="assets/hongkong/02-green-dragon.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">G</span></span>
+              <span class="tile"><img class="tile-art" src="assets/hongkong/02-green-dragon.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">G</span></span>
+              <span class="tile"><img class="tile-art" src="assets/hongkong/02-green-dragon.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">G</span></span>
+              <span class="tile"><img class="tile-art" src="assets/hongkong/04-east-wind.svg" decoding="async" loading="lazy" fetchpriority="low" alt="" draggable="false"><span class="tile-index">E</span></span>
             </div>
             <span class="board-footer">准备好，一起学麻将</span>
           </div>

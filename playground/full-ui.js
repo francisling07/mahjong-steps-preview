@@ -117,6 +117,8 @@
       tenpaiLabel: '打出后听牌',
       tenpaiTotal: '共剩 {n} 张',
       tenpaiFanNote: '牌型听牌，注意起胡番数',
+      hkLowFan: '牌型已成，但番数不足：当前 {n} 番{detail}，香港麻将需 {min} 番起胡',
+      mcrLowFan: '牌型已成，系统已识别 {n} 番{detail}，国标需 {min} 番起和（可点「自主核分」补充）',
       keysHint: '快捷键：←/→ 选牌 · Enter 出牌 · Space 过牌'
     },
     tw: {
@@ -219,6 +221,8 @@
       tenpaiLabel: '打出後聽牌',
       tenpaiTotal: '共剩 {n} 張',
       tenpaiFanNote: '牌型聽牌，注意起胡番數',
+      hkLowFan: '牌型已成，但番數不足：當前 {n} 番{detail}，香港麻雀需 {min} 番起胡',
+      mcrLowFan: '牌型已成，系統已識別 {n} 番{detail}，國標需 {min} 番起和（可點「自主核分」補充）',
       keysHint: '快捷鍵：←/→ 選牌 · Enter 出牌 · Space 過牌'
     },
     en: {
@@ -321,6 +325,8 @@
       tenpaiLabel: 'Waits after discard',
       tenpaiTotal: '{n} visible outs',
       tenpaiFanNote: 'Shape ready — verify min score',
+      hkLowFan: 'Winning shape, but score too low: {n} faan{detail} ({min} faan minimum)',
+      mcrLowFan: 'Winning shape · {n} pts recognized{detail} ({min} pts minimum — use Self review to add patterns)',
       keysHint: 'Keys: ←/→ select · Enter discard · Space pass'
     }
   };
@@ -370,7 +376,9 @@
   function isAutoPassEligible(s) {
     if (!s || s.phase !== 'claim' || pace === 'manual') return false;
     const a = E.available(s);
-    return !!(a && a.actions && a.actions.length === 1 && a.actions[0].kind === 'pass');
+    if (!(a && a.actions && a.actions.length === 1 && a.actions[0].kind === 'pass')) return false;
+    if (insufficientFanInfo(s, a)) return false;
+    return true;
   }
 
   function scheduleAutoPass() {
@@ -596,6 +604,58 @@
     </section>`;
   }
 
+  function hkBreakdownText(breakdown) {
+    const names = {
+      allSequences: ['平胡', '平胡', 'All sequences'],
+      allTriplets: ['对对胡', '對對胡', 'All triplets'],
+      allHonors: ['字一色', '字一色', 'All honors'],
+      fullFlush: ['清一色', '清一色', 'Full flush'],
+      halfFlush: ['混一色', '混一色', 'Half flush'],
+      dragon: ['三元牌', '三元牌', 'Dragon'],
+      seatWind: ['门风', '門風', 'Seat wind'],
+      roundWind: ['圈风', '圈風', 'Round wind'],
+      concealed: ['门清', '門清', 'Concealed'],
+      selfDraw: ['自摸', '自摸', 'Self draw'],
+      orphans: ['十三幺', '十三么', 'Thirteen orphans']
+    };
+    const k = lang === 'zh' ? 0 : lang === 'tw' ? 1 : 2;
+    return (breakdown || []).map(x => `${names[x.id]?.[k] || x.id} ${x.fan}`).join(' · ');
+  }
+
+  function insufficientFanInfo(s, a) {
+    if (!s || !a || !J || typeof J.judge !== 'function') return null;
+    if (s.mode !== 'hk' && s.mode !== 'mcr') return null;
+    let judged = null;
+    if (a.phase === 'turn' && !a.canWin) {
+      judged = J.judge(s.mode, s, 0, 'selfDraw');
+    } else if (a.phase === 'claim' && a.from !== 0 && !a.actions.some(x => x.kind === 'win')) {
+      judged = J.judge(s.mode, s, 0, 'discard', a.discard);
+    }
+    if (!judged || judged.legal) return null;
+    if (s.mode === 'hk' && judged.reason === 'insufficient-fan') {
+      return { mode: 'hk', fan: judged.fan || 0, min: 3, detail: hkBreakdownText(judged.breakdown) };
+    }
+    if (s.mode === 'mcr' && judged.shapeValid && (judged.baseFan || 0) < 8) {
+      const detail = (judged.breakdown || []).map(x => `${x.name?.[lang] || x.no} ${x.fan}`).join(' · ');
+      return { mode: 'mcr', fan: judged.baseFan || 0, min: 8, detail };
+    }
+    return null;
+  }
+
+  function insufficientFanNoticeHtml(a) {
+    const info = insufficientFanInfo(state, a);
+    if (!info) return '';
+    const detailPart = info.detail
+      ? (lang === 'en' ? ` (${info.detail})` : `（${info.detail}）`)
+      : '';
+    const template = info.mode === 'hk' ? c().hkLowFan : c().mcrLowFan;
+    const text = template
+      .replace('{n}', String(info.fan))
+      .replace('{detail}', detailPart)
+      .replace('{min}', String(info.min));
+    return `<div class="fp-lowfan-bar" role="status">${esc(text)}</div>`;
+  }
+
   function tenpaiPreviewHtml(a) {
     if (!a || a.phase !== 'turn' || selected.length !== 1) return '';
     const info = getTenpaiMap()[selected[0]];
@@ -642,6 +702,7 @@
       }).join('');
     }
     return `<section class="fp-decision-bar${a.phase === 'claim' ? ' is-claim' : ''}" aria-label="${esc(a.phase === 'claim' ? c().claim : c().choose)}">
+      ${insufficientFanNoticeHtml(a)}
       ${tenpaiPreviewHtml(a)}
       <div class="fp-decision-row">
         <div class="fp-decision-lead">${lead}</div>

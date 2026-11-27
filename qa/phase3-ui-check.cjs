@@ -330,8 +330,54 @@ function bootFullApp(extraGlobals) {
   assert(coldHtml.includes('tile-art-loading') && coldHtml.includes('onload='), 'Cold browser tile must smoothly swap when external SVG loads');
 
   const css = fs.readFileSync(path.join(root, 'playground/full-style.css'), 'utf8');
-  assert(css.includes('flex-wrap:wrap') && css.includes('fp-tenpai-bar') && css.includes('fp-pool-panel') && css.includes('fp-win-hand'),
-    'full-style.css must include mobile 2-row hand wrap, Tenpai bar, pool overview and winner hand styles');
+  assert(css.includes('flex-wrap:wrap') && css.includes('fp-tenpai-bar') && css.includes('fp-pool-panel') && css.includes('fp-win-hand') && css.includes('fp-lowfan-bar'),
+    'full-style.css must include mobile 2-row hand wrap, Tenpai bar, low-fan bar, pool overview and winner hand styles');
 }
 
-console.log('PASS Phase 3 UI upgrades: auto-pace, tap-twice & keys, Tenpai preview, pool overview, winner hand, partial DOM patch, zero white-tile flash');
+// 8. Insufficient-fan notice on winning shape below minimum score (HK discard 1-faan, HK self-draw 2-faan, MCR < 8 pts)
+{
+  const app = bootFullApp();
+  app.click({ playEnter: '' });
+  app.click({ fullStart: '' });
+  const UI = app.ctx.MahjongFullPlayUI;
+  const s = UI.getState();
+
+  // Exact screenshot hand: 1m1m 345p 678p 234s SS + North discards S -> 1 faan (concealed) < 3 faan min
+  s.hands[0] = ['m1', 'm1', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 's2', 's3', 's4', 'z2', 'z2'];
+  s.melds[0] = [];
+  s.phase = 'claim';
+  s.pending = { from: 3, tile: 'z2', robKong: false };
+  const claimHtml = UI.html();
+  assert(claimHtml.includes('fp-lowfan-bar'), 'HK insufficient-fan discard claim must render .fp-lowfan-bar');
+  assert(claimHtml.includes('1 番') && claimHtml.includes('门清 1') && claimHtml.includes('3 番起胡'),
+    'HK discard notice must explain current 1 faan (Concealed) vs 3 faan minimum');
+
+  // Self-draw S -> 2 faan (concealed + self-draw) < 3 faan min
+  s.hands[0] = ['m1', 'm1', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 's2', 's3', 's4', 'z2', 'z2', 'z2'];
+  s.phase = 'turn';
+  s.turn = 0;
+  s.pending = null;
+  const drawHtml = UI.html();
+  assert(drawHtml.includes('fp-lowfan-bar') && drawHtml.includes('2 番') && drawHtml.includes('自摸 1'),
+    'HK self-draw notice must explain current 2 faan (Concealed + Self draw) vs 3 faan minimum');
+
+  // English localization check
+  UI.setLang('en');
+  const enHtml = UI.html();
+  assert(enHtml.includes('2 faan') && enHtml.includes('3 faan minimum'), 'English low-fan notice must render cleanly');
+  UI.setLang('zh');
+
+  // MCR < 8 points check (strictly uses 和, never 胡)
+  app.click({ fullMode: 'mcr' });
+  app.click({ fullStart: '' });
+  const sm = UI.getState();
+  sm.hands[0] = ['m1', 'm1', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 's2', 's3', 's4', 'z2', 'z2'];
+  sm.melds[0] = [];
+  sm.phase = 'claim';
+  sm.pending = { from: 3, tile: 'z2', robKong: false };
+  const mcrHtml = UI.html();
+  assert(mcrHtml.includes('fp-lowfan-bar') && mcrHtml.includes('8 番起和'),
+    'MCR low-fan notice must show 8-point minimum using 和');
+}
+
+console.log('PASS Phase 3 UI upgrades: auto-pace, tap-twice & keys, Tenpai preview, low-fan notice, pool overview, winner hand, partial DOM patch, zero white-tile flash');

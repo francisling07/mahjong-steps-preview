@@ -33,9 +33,9 @@ assert.ok(Array.isArray(ld['@graph']) && ld['@graph'].length >= 2, 'JSON-LD @gra
 assert.ok(ld['@graph'].some(item => item['@type'] === 'WebApplication'), 'JSON-LD must include WebApplication');
 assert.ok(ld['@graph'].some(item => item['@type'] === 'FAQPage'), 'JSON-LD must include FAQPage');
 
-// 3. Pre-rendered static HTML inside <main id="app"> (no empty SPA shell for crawlers)
-const mainMatch = html.match(/<main id="app">([\s\S]*?)<\/main>/);
-assert.ok(mainMatch, '<main id="app"> must exist');
+// 3. Pre-rendered static HTML inside <main id="app" data-prerendered="zh"> (no empty SPA shell for crawlers, and preserves first-paint LCP on hydration)
+const mainMatch = html.match(/<main id="app" data-prerendered="zh">([\s\S]*?)<\/main>/);
+assert.ok(mainMatch, '<main id="app" data-prerendered="zh"> must exist');
 const mainHtml = mainMatch[1];
 assert.match(mainHtml, /<h1>[\s\S]*从第一张牌开始[\s\S]*<\/h1>/, 'Pre-rendered <main> must contain hero H1');
 for (const styleName of ['香港麻将', '中国国标麻将', '四川血战到底', '美式麻将']) {
@@ -44,6 +44,18 @@ for (const styleName of ['香港麻将', '中国国标麻将', '四川血战到�
 assert.ok(mainHtml.includes('<noscript>'), 'Pre-rendered <main> should include a <noscript> notice');
 const visibleText = mainHtml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 assert.ok(visibleText.length >= 300, `Pre-rendered visible text too short (${visibleText.length} chars)`);
+
+// 3b. Only critical style.css is render-blocking; subpage stylesheets load asynchronously
+const headHtml = html.slice(0, html.indexOf('</head>')).replace(/<noscript>[\s\S]*?<\/noscript>/g, '');
+const blockingCss = [...headHtml.matchAll(/<link\b[^>]*rel="stylesheet"[^>]*>/g)]
+  .map(m => m[0])
+  .filter(tag => !tag.includes('media="print"'));
+assert.equal(blockingCss.length, 1, `Expected only 1 render-blocking stylesheet (style.css), found ${blockingCss.length}`);
+assert.ok(blockingCss[0].includes('href="style.css"'), 'The single render-blocking stylesheet must be style.css');
+
+// 3c. Verify app.js preserves pre-rendered homepage DOM on first Chinese paint so LCP is not reset
+const appJs = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
+assert.ok(appJs.includes("app.dataset.prerendered === 'zh'"), 'app.js must skip innerHTML overwrite when pre-rendered homepage matches');
 
 // 4. All <script src="..."> tags use defer AND preserve src-first ordering for VM test regex
 const scriptTags = [...html.matchAll(/<script\b[^>]*>/g)].map(m => m[0]).filter(tag => tag.includes('src='));
